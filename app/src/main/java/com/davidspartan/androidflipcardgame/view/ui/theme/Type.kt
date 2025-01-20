@@ -1,4 +1,4 @@
-package com.davidspartan.androidflipcardgame.ui.theme
+package com.davidspartan.androidflipcardgame.view.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

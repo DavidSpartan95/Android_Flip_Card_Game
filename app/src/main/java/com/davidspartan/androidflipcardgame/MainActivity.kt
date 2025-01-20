@@ -32,104 +32,22 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.davidspartan.androidflipcardgame.ui.theme.AndroidFlipCardGameTheme
+import androidx.navigation.compose.rememberNavController
+import com.davidspartan.androidflipcardgame.view.navigation.NavHost
+import com.davidspartan.androidflipcardgame.view.ui.theme.AndroidFlipCardGameTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AndroidFlipCardGameTheme {
-                FlipCard()
-            }
+            val navController = rememberNavController()
+            NavHost(navController)
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AndroidFlipCardGameTheme {
-        Greeting("Android")
-    }
-}
-
-@Composable
-fun FlipCard() {
-    // State to track whether the card is flipped
-    var isFlipped by remember { mutableStateOf(false) }
-
-    // Animate the rotation angle
-    val rotation by animateFloatAsState(
-        targetValue = if (isFlipped) 180f else 0f,
-        animationSpec = tween(durationMillis = 600) // Customize the duration as needed
-    )
-
-    // Container to detect clicks and handle the flip logic
-    Box(
-        modifier = Modifier
-            .padding(16.dp)
-            .size(200.dp) // Adjust the size as needed
-            .clickable { isFlipped = !isFlipped }
-            .graphicsLayer {
-                rotationY = rotation // Apply the rotation animation
-                cameraDistance = 12f * density // Adjust for better 3D effect
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        // Conditional rendering based on the rotation
-        if (rotation <= 90f) {
-            FrontCard()
-        } else {
-            BackCard(
-                rotation = rotation
-            )
-        }
-    }
-}
-
-@Composable
-fun FrontCard() {
-    Card(
-        elevation = CardDefaults.cardElevation(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Front Title", style = MaterialTheme.typography.headlineSmall)
-            Text(text = "Front Subtitle", style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
-
-@Composable
-fun BackCard(rotation: Float) {
-    Card(
-        elevation = CardDefaults.cardElevation(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary)
-    ) {
-        Column(
-            modifier = Modifier
-                .graphicsLayer {
-                    // Counter-rotate to ensure text is upright
-                    rotationY = 180f
-                }
-                .padding(16.dp)
-        ) {
-            Text(text = "Back Title", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSecondary)
-            Text(text = "Back Subtitle", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSecondary)
-        }
-    }
-}
 
 
 

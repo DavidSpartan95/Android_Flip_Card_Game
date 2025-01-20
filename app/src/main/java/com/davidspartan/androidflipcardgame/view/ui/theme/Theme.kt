@@ -1,4 +1,4 @@
-package com.davidspartan.androidflipcardgame.ui.theme
+package com.davidspartan.androidflipcardgame.view.ui.theme
 
 import android.app.Activity
 import android.os.Build
