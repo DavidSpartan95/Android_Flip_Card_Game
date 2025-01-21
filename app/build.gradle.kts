@@ -3,8 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.org.jetbrains.kotlin.kapt)
     id("io.realm.kotlin")
+    id("com.google.devtools.ksp") // KSP plugin
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -40,13 +41,17 @@ android {
     buildFeatures {
         compose = true
     }
+
 }
 
 dependencies {
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-compiler:2.51.1") // Use KSP for Hilt compiler
+
     implementation("io.realm.kotlin:library-base:2.0.0")
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
-    implementation ("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
