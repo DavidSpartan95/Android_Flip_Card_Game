@@ -41,13 +41,13 @@ fun OptionButton(
         },
         modifier = Modifier
             .size(width = (screenWidth * 0.45).dp, height = 50.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6750A0))
+        colors = ButtonDefaults.buttonColors(containerColor = Color(android.graphics.Color.parseColor(theme.secondaryHexColor)))
     ) {
         AutoResizedText(
             text = text,
             style = choiceButtonTextStyle,
             modifier = Modifier,
-            color = Color.White
+            color = Color(android.graphics.Color.parseColor(theme.textHexColor))
         )
     }
 
