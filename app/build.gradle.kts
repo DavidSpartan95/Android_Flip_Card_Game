@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    //alias(libs.plugins.org.jetbrains.kotlin.kapt)
+
     id("io.realm.kotlin")
     id("com.google.devtools.ksp") // KSP plugin
     id("com.google.dagger.hilt.android")
@@ -45,8 +47,12 @@ android {
 }
 
 dependencies {
+    implementation(libs.core.ktx)
+
     implementation("com.google.dagger:hilt-android:2.51.1")
-    ksp("com.google.dagger:hilt-compiler:2.51.1") // Use KSP for Hilt compiler
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
+    ksp("com.google.dagger:hilt-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation("io.realm.kotlin:library-base:2.0.0")
     implementation(libs.navigation.compose)
