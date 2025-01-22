@@ -16,7 +16,7 @@ class MyApp: Application() {
             configuration = RealmConfiguration.create(
                 schema = setOf(
                     User::class,
-                    Themes::class,
+                    Theme::class,
                 )
             )
         )

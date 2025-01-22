@@ -21,7 +21,10 @@ fun NavHost(
 ){
     NavHost(navController,startDestination = NewUser) {
         composable<Home> {
-            HomeScreen()
+            HomeScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         composable<Game> {
             GameScreen()
@@ -29,12 +32,13 @@ fun NavHost(
         composable<Settings> {
             SettingsScreen()
         }
-        composable<Theme> {
+        composable<Appearance> {
             ThemeScreen()
         }
         composable<NewUser> {
             NewUserScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                navController = navController
             )
         }
     }
@@ -50,7 +54,7 @@ object Game
 object Settings
 
 @Serializable
-object Theme
+object Appearance
 
 @Serializable
 object NewUser

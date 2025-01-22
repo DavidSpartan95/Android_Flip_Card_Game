@@ -12,6 +12,6 @@ class User: RealmObject {
     var id: ObjectId = BsonObjectId()
     var name: String = ""
     var score: Long = 0
-    var themes: RealmList<Themes> = realmListOf()
+    var themes: RealmList<Theme> = realmListOf()
 
 }
