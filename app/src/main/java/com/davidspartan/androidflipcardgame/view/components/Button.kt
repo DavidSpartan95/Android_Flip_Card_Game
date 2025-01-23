@@ -20,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.isUnspecified
 import com.davidspartan.androidflipcardgame.model.realm.Theme
+import com.davidspartan.androidflipcardgame.model.stringToColor
 
 
 @Composable
@@ -41,13 +42,13 @@ fun OptionButton(
         },
         modifier = Modifier
             .size(width = (screenWidth * 0.45).dp, height = 50.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(android.graphics.Color.parseColor(theme.secondaryHexColor)))
+        colors = ButtonDefaults.buttonColors(containerColor = stringToColor(theme.secondaryHexColor))
     ) {
         AutoResizedText(
             text = text,
             style = choiceButtonTextStyle,
             modifier = Modifier,
-            color = Color(android.graphics.Color.parseColor(theme.textHexColor))
+            color = stringToColor(theme.textHexColor)
         )
     }
 
