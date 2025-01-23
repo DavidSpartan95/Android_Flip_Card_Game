@@ -28,11 +28,15 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.davidspartan.androidflipcardgame.R
+import com.davidspartan.androidflipcardgame.model.game.Card
 import com.davidspartan.androidflipcardgame.model.realm.Theme
 import com.davidspartan.androidflipcardgame.model.stringToColor
 
 @Composable
-fun FlipCard(theme: Theme){
+fun FlipCard(
+    theme: Theme,
+    card: Card
+){
     // State to track whether the card is flipped
     var isFlipped by remember { mutableStateOf(false) }
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -85,7 +89,8 @@ fun FlipCard(theme: Theme){
                 Image(
                     painter = painterResource(id = R.drawable.android_card_front),
                     contentDescription = "Card Back",
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    colorFilter = ColorFilter.tint(card.color)
                 )
             }
         }
