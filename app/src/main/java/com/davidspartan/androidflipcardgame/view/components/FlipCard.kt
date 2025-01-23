@@ -2,9 +2,11 @@ package com.davidspartan.androidflipcardgame.view.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,13 +21,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.davidspartan.androidflipcardgame.R
+import com.davidspartan.androidflipcardgame.model.realm.Theme
+import com.davidspartan.androidflipcardgame.model.stringToColor
 
 @Composable
-fun FlipCard() {
+fun FlipCard(theme: Theme){
     // State to track whether the card is flipped
     var isFlipped by remember { mutableStateOf(false) }
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     // Animate the rotation angle
     val rotation by animateFloatAsState(
@@ -37,56 +47,47 @@ fun FlipCard() {
     Box(
         modifier = Modifier
             .padding(16.dp)
-            .size(200.dp) // Adjust the size as needed
+            .size(screenWidth * 0.25f) // Set size to 25% of screen width
             .clickable { isFlipped = !isFlipped }
             .graphicsLayer {
                 rotationY = rotation // Apply the rotation animation
                 cameraDistance = 12f * density // Adjust for better 3D effect
             },
         contentAlignment = Alignment.Center
-    ) {
-        // Conditional rendering based on the rotation
+    ){
+
         if (rotation <= 90f) {
-            FrontCard()
+            Card(
+                elevation = CardDefaults.cardElevation(8.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(containerColor = stringToColor(theme.secondaryHexColor))
+
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.card_back),
+                    contentDescription = "Card Back",
+                    modifier = Modifier.fillMaxSize(),
+                    colorFilter = ColorFilter.tint(stringToColor(theme.textHexColor))
+                )
+            }
+
         } else {
-            BackCard(
-                rotation = rotation
-            )
-        }
-    }
-}
-
-@Composable
-fun FrontCard() {
-    Card(
-        elevation = CardDefaults.cardElevation(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Front Title", style = MaterialTheme.typography.headlineSmall)
-            Text(text = "Front Subtitle", style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
-
-@Composable
-fun BackCard(rotation: Float) {
-    Card(
-        elevation = CardDefaults.cardElevation(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary)
-    ) {
-        Column(
-            modifier = Modifier
-                .graphicsLayer {
-                    // Counter-rotate to ensure text is upright
-                    rotationY = 180f
-                }
-                .padding(16.dp)
-        ) {
-            Text(text = "Back Title", style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSecondary)
-            Text(text = "Back Subtitle", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSecondary)
+            Card(
+                elevation = CardDefaults.cardElevation(8.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier
+                    .graphicsLayer {
+                        // Counter-rotate to ensure the image is not mirror reverted
+                        rotationY = 180f
+                    }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.android_card_front),
+                    contentDescription = "Card Back",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

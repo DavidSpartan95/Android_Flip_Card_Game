@@ -27,7 +27,10 @@ fun NavHost(
             )
         }
         composable<Game> {
-            GameScreen()
+            GameScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         composable<Settings> {
             SettingsScreen()
