@@ -75,5 +75,4 @@ class UserRepositoryViewModel :ViewModel() {
             }
         }
     }
-
 }

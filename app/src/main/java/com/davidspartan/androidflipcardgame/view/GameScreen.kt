@@ -3,9 +3,7 @@ package com.davidspartan.androidflipcardgame.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -14,16 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.FlipCard
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
-import com.davidspartan.androidflipcardgame.view.navigation.Appearance
-import com.davidspartan.androidflipcardgame.view.navigation.Game
-import com.davidspartan.androidflipcardgame.view.navigation.Settings
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
 
@@ -31,11 +26,12 @@ import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
 fun GameScreen(
     navController: NavHostController,
     viewModel: UserRepositoryViewModel,
-    gameViewModel: GameViewModel = GameViewModel()
 ) {
+    var gameViewModel = remember { GameViewModel() }
     val selectedUser by viewModel.selectedUser.collectAsState(initial = null)
     val selectedTheme by viewModel.selectedTheme.collectAsState(initial = null)
     val cards by gameViewModel.cards.collectAsState()
+    val gameState by gameViewModel.gameState.collectAsState()
 
 
     if (selectedUser == null || selectedTheme == null) {
@@ -45,7 +41,7 @@ fun GameScreen(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
-    } else {
+    } else if (!gameState.isGameOver) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -54,7 +50,8 @@ fun GameScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(selectedUser!!.name)
-            Text("Current score is 0")
+            Text("Current score is ${gameState.score}")
+            Text("Current flipped cards is ${gameState.totalFlips}")
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3), // 3 cards per row
                 modifier = Modifier
@@ -66,8 +63,28 @@ fun GameScreen(
                     FlipCard(
                         theme = selectedTheme!!,
                         card = card
-                    )
+                    ){
+                        gameViewModel.flipCard(
+                            card = card
+                        )
+                    }
                 }
+            }
+        }
+    }else{
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(stringToColor(selectedTheme!!.primaryHexColor)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Text("Game Over")
+            OptionButton(
+                text = "New Game",
+                theme = selectedTheme!!
+            ) {
+                gameViewModel.resetGame()
             }
         }
     }

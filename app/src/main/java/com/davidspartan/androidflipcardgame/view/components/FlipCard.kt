@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,10 +36,11 @@ import com.davidspartan.androidflipcardgame.model.stringToColor
 @Composable
 fun FlipCard(
     theme: Theme,
-    card: Card
+    card: Card,
+    flipAction: () -> Unit
 ){
-    // State to track whether the card is flipped
-    var isFlipped by remember { mutableStateOf(false) }
+    // Bind the `isFlipped` state to `card.isFlipped`
+    val isFlipped by rememberUpdatedState(card.isFlipped)
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     // Animate the rotation angle
@@ -52,7 +54,9 @@ fun FlipCard(
         modifier = Modifier
             .padding(16.dp)
             .size(screenWidth * 0.25f) // Set size to 25% of screen width
-            .clickable { isFlipped = !isFlipped }
+            .clickable {
+                if (!isFlipped) flipAction.invoke()
+            }
             .graphicsLayer {
                 rotationY = rotation // Apply the rotation animation
                 cameraDistance = 12f * density // Adjust for better 3D effect
