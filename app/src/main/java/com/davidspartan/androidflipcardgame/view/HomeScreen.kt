@@ -47,6 +47,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text("TOTAL SCORE, ${selectedUser!!.score}!")
             // Display content when a user is logged in
             OptionButton(
                 text = "Play",

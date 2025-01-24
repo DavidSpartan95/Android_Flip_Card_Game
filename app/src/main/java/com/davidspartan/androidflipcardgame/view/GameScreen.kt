@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,6 +34,11 @@ fun GameScreen(
     val cards by gameViewModel.cards.collectAsState()
     val gameState by gameViewModel.gameState.collectAsState()
 
+    LaunchedEffect(gameState.isGameOver) {
+        print("Game over state changed: ${gameState.isGameOver}")
+        viewModel.addScore(selectedUser!!.id, gameState.score)
+
+    }
 
     if (selectedUser == null || selectedTheme == null) {
         // Show message when no user is logged in
