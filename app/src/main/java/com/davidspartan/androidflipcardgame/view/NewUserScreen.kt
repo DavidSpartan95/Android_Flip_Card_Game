@@ -1,5 +1,6 @@
 package com.davidspartan.androidflipcardgame.view
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,10 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
+import com.davidspartan.androidflipcardgame.model.isValidUsername
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
@@ -111,6 +114,7 @@ fun PopupBox(
     onDismiss: () -> Unit
 ) {
     var newUserName by remember { mutableStateOf("das") }
+    val context = LocalContext.current
 
     Box(
         contentAlignment = Alignment.Center,
@@ -119,7 +123,7 @@ fun PopupBox(
     ) {
         Column(
             Modifier
-                .background(color = Color.Magenta, shape = RoundedCornerShape(8.dp))
+                .background(color = Color.White, shape = RoundedCornerShape(8.dp))
                 .size(250.dp)
                 .fillMaxWidth()
                 .padding(2.dp)
@@ -142,9 +146,15 @@ fun PopupBox(
 
             Button(
                 onClick = {
-                    if (newUserName.isNotEmpty()) {
+
+                    if (isValidUsername(newUserName)) {
                         viewModel.addUser(name = newUserName)
                         onDismiss()
+                    }else{
+                        Toast.makeText(
+                            context,
+                            "Invalid username. Only letters and numbers allowed (max 16 characters).",
+                            Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
