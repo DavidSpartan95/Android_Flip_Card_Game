@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -32,11 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavHostController
-import com.davidspartan.androidflipcardgame.model.isValidUsername
-import com.davidspartan.androidflipcardgame.view.components.OptionButton
+import com.davidspartan.androidflipcardgame.model.isValidUsernameForUser
 import com.davidspartan.androidflipcardgame.view.navigation.Home
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
 
@@ -113,7 +108,7 @@ fun PopupBox(
     viewModel: UserRepositoryViewModel,
     onDismiss: () -> Unit
 ) {
-    var newUserName by remember { mutableStateOf("das") }
+    var newUserName by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     Box(
@@ -147,7 +142,7 @@ fun PopupBox(
             Button(
                 onClick = {
 
-                    if (isValidUsername(newUserName)) {
+                    if (isValidUsernameForUser(newUserName)) {
                         viewModel.addUser(name = newUserName)
                         onDismiss()
                     }else{

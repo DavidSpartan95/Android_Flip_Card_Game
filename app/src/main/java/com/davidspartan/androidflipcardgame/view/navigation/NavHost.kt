@@ -36,7 +36,10 @@ fun NavHost(
             SettingsScreen()
         }
         composable<Appearance> {
-            ThemeScreen()
+            ThemeScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
         composable<NewUser> {
             NewUserScreen(

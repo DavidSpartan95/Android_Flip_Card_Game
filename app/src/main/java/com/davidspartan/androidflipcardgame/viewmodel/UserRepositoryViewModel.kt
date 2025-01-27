@@ -67,6 +67,16 @@ class UserRepositoryViewModel :ViewModel() {
         }
     }
 
+    fun userHasThemeWithName(user: User?, themeName: String): Boolean {
+        if (user == null) return false
+        user.themes.forEach { theme ->
+            if (theme.name == themeName) {
+                return true
+            }
+        }
+        return false
+    }
+
     fun editUser(userId: ObjectId, newName: String, incrementScore: Boolean) {
         viewModelScope.launch {
             realm.write {
