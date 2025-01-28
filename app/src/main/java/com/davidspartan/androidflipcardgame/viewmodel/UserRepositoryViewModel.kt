@@ -63,8 +63,8 @@ class UserRepositoryViewModel :ViewModel() {
         val defaultTheme = Theme().apply {
             this.name = "Default"
             primaryHexColor = "#7b9acc"
-            secondaryHexColor = "#FCF6F5" // Black secondary color
-            textHexColor = "#7b9acc" // White text color
+            secondaryHexColor = "#FCF6F5"
+            textHexColor = "#7b9acc"
         }
 
         // Create a new user with the default theme
@@ -89,12 +89,19 @@ class UserRepositoryViewModel :ViewModel() {
         return false
     }
 
-    fun editUser(userId: ObjectId, newName: String, incrementScore: Boolean) {
+    fun editUser(userId: ObjectId, newName: String) {
         viewModelScope.launch {
             realm.write {
                 val user = query<User>("id == $0", userId).find().first()
                 user.name = newName
-                user.score++
+            }
+        }
+    }
+    fun deleteUser(user: User) {
+        viewModelScope.launch {
+            realm.write {
+                val deleteUser = query<User>("id == $0", user.id).find().first()
+                delete(deleteUser)
             }
         }
     }
