@@ -71,6 +71,7 @@ class UserRepositoryViewModel :ViewModel() {
         val newUser = User().apply {
             this.name = name
             this.themes.add(defaultTheme)
+            this.selectedTheme = defaultTheme
         }
 
         // Add the user and the default theme to the Realm database
