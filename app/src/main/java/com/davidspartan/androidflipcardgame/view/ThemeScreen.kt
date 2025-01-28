@@ -51,11 +51,11 @@ fun ThemeScreen(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
+            .background(stringToColor(selectedTheme!!.primaryHexColor))
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(3), // 3 cards per row
-            modifier = Modifier
-                .background(stringToColor(selectedTheme!!.primaryHexColor)),
+            modifier = Modifier,
             verticalArrangement = Arrangement.Center
         ) {
             items(AllThemes) { theme -> // Iterate over each card directly

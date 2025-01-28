@@ -15,10 +15,9 @@ class GameViewModel : ViewModel() {
     private val _gameState = MutableStateFlow(GameState())
     val gameState: MutableStateFlow<GameState> = _gameState
 
-    private val _cards = MutableStateFlow<List<Card>>(emptyList()) // Initialize with an empty list
+    private val _cards = MutableStateFlow<List<Card>>(emptyList())
     val cards: MutableStateFlow<List<Card>> = _cards
 
-    // Separate StateFlow to observe flipped cards directly
     private val _flippedCards = MutableStateFlow(0)
     private val flippedCards: StateFlow<Int> = _flippedCards
 

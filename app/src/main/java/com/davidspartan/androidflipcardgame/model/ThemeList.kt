@@ -5,9 +5,9 @@ import com.davidspartan.androidflipcardgame.model.realm.Theme
 val AllThemes = listOf(
     Theme().apply {
         name = "Default"
-        primaryHexColor = "#FFFFFF"
-        secondaryHexColor = "#000000"
-        textHexColor = "#FFFFFF"
+        primaryHexColor = "#7b9acc"
+        secondaryHexColor = "#FCF6F5"
+        textHexColor = "#7b9acc"
     },
     Theme().apply {
         name = "Forest"

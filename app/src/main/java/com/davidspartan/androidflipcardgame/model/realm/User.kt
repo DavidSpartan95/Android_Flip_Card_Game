@@ -1,5 +1,6 @@
 package com.davidspartan.androidflipcardgame.model.realm
 
+import com.davidspartan.androidflipcardgame.model.AllThemes
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
@@ -13,5 +14,6 @@ class User: RealmObject {
     var name: String = ""
     var score: Long = 0
     var themes: RealmList<Theme> = realmListOf()
+    var selectedTheme: Theme = AllThemes[0]
 
 }
