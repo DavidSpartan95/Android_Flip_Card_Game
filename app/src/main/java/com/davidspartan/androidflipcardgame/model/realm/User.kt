@@ -14,6 +14,6 @@ class User: RealmObject {
     var name: String = ""
     var score: Long = 0
     var themes: RealmList<Theme> = realmListOf()
-    var selectedTheme: Theme = AllThemes[0]
+    var selectedTheme: Theme? = AllThemes[0]
 
 }

@@ -33,17 +33,29 @@ class UserRepositoryViewModel :ViewModel() {
     private val _selectedUser = MutableStateFlow<User?>(null)
     val selectedUser: StateFlow<User?> = _selectedUser
 
-    private val _selectedTheme = MutableStateFlow<Theme?>(null)
-    val selectedTheme: StateFlow<Theme?> = _selectedTheme
 
 
     fun selectUser(user: User) {
         _selectedUser.value = user
-        selectTheme(user.themes[0])
 
     }
-    fun selectTheme(theme: Theme) {
-        _selectedTheme.value = theme
+    fun selectTheme(userId: ObjectId, theme: Theme) {
+        viewModelScope.launch {
+            realm.write {
+                val user = query<User>("id == $0", userId).find().first()
+                user.selectedTheme = theme
+            }
+        }
+    }
+    fun addThemeToUser(userId: ObjectId, theme: Theme) {
+        viewModelScope.launch {
+            realm.write {
+                val user = query<User>("id == $0", userId).find().first()
+                user.themes.add(theme)
+            }
+            val updateUser = realm.query<User>("id == $0", userId).find().first()
+            selectUser(updateUser)
+        }
     }
 
     fun addUser(name: String) {

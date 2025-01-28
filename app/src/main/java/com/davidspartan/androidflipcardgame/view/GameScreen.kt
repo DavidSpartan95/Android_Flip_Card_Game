@@ -30,7 +30,6 @@ fun GameScreen(
 ) {
     var gameViewModel = remember { GameViewModel() }
     val selectedUser by viewModel.selectedUser.collectAsState(initial = null)
-    val selectedTheme by viewModel.selectedTheme.collectAsState(initial = null)
     val cards by gameViewModel.cards.collectAsState()
     val gameState by gameViewModel.gameState.collectAsState()
 
@@ -40,7 +39,7 @@ fun GameScreen(
 
     }
 
-    if (selectedUser == null || selectedTheme == null) {
+    if (selectedUser == null) {
         // Show message when no user is logged in
         Text(
             text = "No user is logged in.",
@@ -51,7 +50,7 @@ fun GameScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(stringToColor(selectedTheme!!.primaryHexColor)),
+                .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
@@ -61,13 +60,13 @@ fun GameScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3), // 3 cards per row
                 modifier = Modifier
-                    .background(stringToColor(selectedTheme!!.primaryHexColor)),
+                    .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor)),
                 verticalArrangement = Arrangement.Center
             ) {
                 items(cards) { card -> // Iterate over each card directly
 
                     FlipCard(
-                        theme = selectedTheme!!,
+                        theme = selectedUser!!.selectedTheme!!,
                         card = card
                     ){
                         gameViewModel.flipCard(
@@ -81,14 +80,14 @@ fun GameScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(stringToColor(selectedTheme!!.primaryHexColor)),
+                .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text("Game Over")
             OptionButton(
                 text = "New Game",
-                theme = selectedTheme!!
+                theme = selectedUser!!.selectedTheme!!
             ) {
                 gameViewModel.resetGame()
             }

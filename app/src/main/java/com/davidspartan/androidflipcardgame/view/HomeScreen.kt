@@ -28,10 +28,9 @@ fun HomeScreen(
     viewModel: UserRepositoryViewModel
 ) {
     val selectedUser by viewModel.selectedUser.collectAsState(initial = null)
-    val selectedTheme by viewModel.selectedTheme.collectAsState(initial = null)
 
 
-    if (selectedUser == null || selectedTheme == null) {
+    if (selectedUser == null) {
         // Show message when no user is logged in
         Text(
             text = "No user is logged in.",
@@ -43,7 +42,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(stringToColor(selectedTheme!!.primaryHexColor)),
+                .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -51,7 +50,7 @@ fun HomeScreen(
             // Display content when a user is logged in
             OptionButton(
                 text = "Play",
-                theme = selectedTheme!!
+                theme = selectedUser!!.selectedTheme!!
             ) {
                 navController.navigate(Game)
             }
@@ -60,14 +59,14 @@ fun HomeScreen(
 
             OptionButton(
                 text = "Themes",
-                theme = selectedTheme!!
+                theme = selectedUser!!.selectedTheme!!
             ) { navController.navigate(Appearance) }
 
             Spacer(modifier = Modifier.size(5.dp))
 
             OptionButton(
                 text = "Settings",
-                theme = selectedTheme!!
+                theme = selectedUser!!.selectedTheme!!
             ) { navController.navigate(Settings) }
         }
     }

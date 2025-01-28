@@ -44,37 +44,36 @@ fun ThemeScreen(
     viewModel: UserRepositoryViewModel
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val selectedTheme by viewModel.selectedTheme.collectAsState(initial = AllThemes[0])
     val selectedUser by viewModel.selectedUser.collectAsState(initial = null)
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(stringToColor(selectedTheme!!.primaryHexColor))
-    ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3), // 3 cards per row
-            modifier = Modifier,
-            verticalArrangement = Arrangement.Center
+    if (selectedUser != null){
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor))
         ) {
-            items(AllThemes) { theme -> // Iterate over each card directly
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3), // 3 cards per row
+                modifier = Modifier,
+                verticalArrangement = Arrangement.Center
+            ) {
+                items(AllThemes) { theme -> // Iterate over each card directly
 
-                Box {
+                    Box {
 
-                    ThemeSample(theme)
-                    if(!viewModel.userHasThemeWithName(selectedUser, theme.name)){
-                        Box(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .size(screenWidth * 0.25f)
-                                .background(
-                                    color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
-                                    shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
+                        ThemeSample(theme)
+                        if(!viewModel.userHasThemeWithName(selectedUser, theme.name)){
+                            Box(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .size(screenWidth * 0.25f)
+                                    .background(
+                                        color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
+                                        shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
+                                    ),
                                 )
-                            ,
-
-                        )
+                        }
                     }
                 }
             }
