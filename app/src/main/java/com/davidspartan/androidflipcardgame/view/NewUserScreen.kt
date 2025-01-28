@@ -54,7 +54,8 @@ fun NewUserScreen(
     val showPopup = remember { mutableStateOf(false) } // Track if popup is visible
     val showDeleteDialog = remember { mutableStateOf(false) }
     val showInfoDialog = remember { mutableStateOf(false) }
-    val userSelected = remember { mutableStateOf<User?>(null) }
+    var userSelected by remember { mutableStateOf<User?>(null) }
+    val context = LocalContext.current
 
     Box(
         contentAlignment = Alignment.Center,
@@ -71,7 +72,17 @@ fun NewUserScreen(
         ) {
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = stringToColor(AllThemes[0].primaryHexColor)),
-                onClick = { showPopup.value = true }
+                onClick = {
+                    if (users.size>=8) {
+                        Toast.makeText(
+                            context,
+                            "Max 8 users allowed.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        showPopup.value = true
+                    }
+                }
             ) {
                 Text("Create New User")
             }
@@ -117,8 +128,8 @@ fun NewUserScreen(
                         modifier = Modifier
                             .padding(8.dp) // Optional padding around the icon
                             .clickable {
+                                userSelected = user
                                 showDeleteDialog.value = true
-                                viewModel.deleteUser(user)
                             }
                     )
                 }
@@ -129,7 +140,7 @@ fun NewUserScreen(
             DialogPopup(
                 onDismissRequest = { showDeleteDialog.value = false },
                 onConfirmation = {
-                    userSelected.value?.let { user ->
+                    userSelected?.let { user ->
                         viewModel.deleteUser(user)
                     }
                     showDeleteDialog.value = false
