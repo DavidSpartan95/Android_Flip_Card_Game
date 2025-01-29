@@ -94,7 +94,6 @@ class GameViewModel : ViewModel() {
 
         // Reset the flippedCards count in the game state
         _flippedCards.value = 0
-        _gameState.value = _gameState.value.copy(totalFlips = 0)
     }
 
     fun checkCards(): Boolean {
