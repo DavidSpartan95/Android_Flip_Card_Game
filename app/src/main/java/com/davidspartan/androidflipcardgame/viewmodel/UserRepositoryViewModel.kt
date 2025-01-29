@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
 
-class UserRepositoryViewModel :ViewModel() {
+class UserRepositoryViewModel : ViewModel() {
 
     private val realm = MyApp.realm
 
@@ -34,19 +34,24 @@ class UserRepositoryViewModel :ViewModel() {
     val selectedUser: StateFlow<User?> = _selectedUser
 
 
-
     fun selectUser(user: User) {
         _selectedUser.value = user
 
     }
-    fun selectTheme(userId: ObjectId, theme: Theme) {
+
+    fun selectTheme(user: User, theme: Theme) {
+        if (!userHasThemeWithName(user, theme.name)) return
+
         viewModelScope.launch {
             realm.write {
-                val user = query<User>("id == $0", userId).find().first()
-                user.selectedTheme = theme
+                val queryUser = query<User>("id == $0", user.id).find().first()
+                queryUser.selectedTheme = theme
             }
+            val updateUser = realm.query<User>("id == $0", user.id).find().first()
+            selectUser(updateUser)
         }
     }
+
     fun addThemeToUser(userId: ObjectId, theme: Theme) {
         viewModelScope.launch {
             realm.write {
@@ -58,6 +63,23 @@ class UserRepositoryViewModel :ViewModel() {
         }
     }
 
+    fun purchaseTheme(user: User, theme: Theme): Boolean {
+        if (user.score < theme.price) return false
+
+        viewModelScope.launch {
+            realm.write {
+                val queryUser = query<User>("id == $0", user.id).find().first()
+                queryUser.score -= theme.price
+                queryUser.themes.add(theme)
+            }
+        }
+        addThemeToUser(
+            userId = user.id,
+            theme = theme
+        )
+        return true
+    }
+
     fun addUser(name: String) {
         // Create a default theme
         val defaultTheme = Theme().apply {
@@ -65,6 +87,7 @@ class UserRepositoryViewModel :ViewModel() {
             primaryHexColor = "#7b9acc"
             secondaryHexColor = "#FCF6F5"
             textHexColor = "#7b9acc"
+            price = 0
         }
 
         // Create a new user with the default theme
@@ -98,6 +121,7 @@ class UserRepositoryViewModel :ViewModel() {
             }
         }
     }
+
     fun deleteUser(user: User) {
         viewModelScope.launch {
             realm.write {
@@ -106,12 +130,13 @@ class UserRepositoryViewModel :ViewModel() {
             }
         }
     }
+
     fun addScore(userId: ObjectId, score: Int) {
         viewModelScope.launch {
 
             realm.write {
                 val user = query<User>("id == $0", userId).find().first()
-                user.score+= score
+                user.score += score
             }
             val updateUser = realm.query<User>("id == $0", userId).find().first()
             selectUser(updateUser)

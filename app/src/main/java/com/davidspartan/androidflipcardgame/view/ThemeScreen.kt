@@ -1,10 +1,12 @@
 package com.davidspartan.androidflipcardgame.view
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,18 +14,27 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +46,7 @@ import com.davidspartan.androidflipcardgame.R
 import com.davidspartan.androidflipcardgame.model.AllThemes
 import com.davidspartan.androidflipcardgame.model.realm.Theme
 import com.davidspartan.androidflipcardgame.model.stringToColor
+import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.FlipCard
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
 
@@ -45,6 +57,9 @@ fun ThemeScreen(
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val selectedUser by viewModel.selectedUser.collectAsState(initial = null)
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var themeSelectedForPurchase by remember { mutableStateOf(AllThemes[0]) }
+    val context = LocalContext.current
 
     if (selectedUser != null){
         Box(
@@ -62,7 +77,11 @@ fun ThemeScreen(
 
                     Box {
 
-                        ThemeSample(theme)
+                        ThemeSample(
+                            theme,
+                            theme.name == selectedUser!!.selectedTheme!!.name){
+                            viewModel.selectTheme(selectedUser!!, theme)
+                        }
                         if(!viewModel.userHasThemeWithName(selectedUser, theme.name)){
                             Box(
                                 modifier = Modifier
@@ -71,25 +90,54 @@ fun ThemeScreen(
                                     .background(
                                         color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
                                         shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
-                                    ),
+                                    )
+                                    .clickable {
+                                        themeSelectedForPurchase = theme
+                                        showDeleteDialog = true
+
+                                    }
+                                ,
                                 )
                         }
                     }
                 }
+
+            }
+            if (showDeleteDialog) {
+                DialogPopup(
+                    onDismissRequest = { showDeleteDialog = false },
+                    onConfirmation = {
+                        selectedUser?.let { user ->
+                            if (viewModel.purchaseTheme(user,themeSelectedForPurchase)){
+                                viewModel.selectTheme(user, themeSelectedForPurchase)
+                                showDeleteDialog = false
+                            }else{
+                                Toast.makeText(context, "You need ${themeSelectedForPurchase.price - selectedUser!!.score} more points to unlock this theme", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                    },
+                    dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
+                    dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
+                    icon = Icons.Default.ShoppingCart
+                )
             }
         }
     }
 }
 
 @Composable
-fun ThemeSample(theme: Theme) {
+fun ThemeSample(theme: Theme, currentlySelected: Boolean, function: () -> Unit) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     Box(
         modifier = Modifier
             .padding(16.dp)
-            .size(screenWidth * 0.25f), // Set size to 25% of screen width
+            .size(screenWidth * 0.25f) // Set size to 25% of screen width
+            .clickable {
+                function.invoke()
+            },
         contentAlignment = Alignment.Center
     ){
         Card(
@@ -120,6 +168,21 @@ fun ThemeSample(theme: Theme) {
                         .padding(8.dp),
 
                     )
+            }
+        }
+        if(currentlySelected){
+            Row(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalArrangement = Arrangement.End
+            ){
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = "Delete User",
+                    tint = stringToColor("#d4af37"),
+                    modifier = Modifier
+                        .padding(2.dp)
+                )
             }
         }
     }

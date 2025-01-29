@@ -12,4 +12,5 @@ class Theme: RealmObject {
     var primaryHexColor: String = ""
     var secondaryHexColor: String = ""
     var textHexColor: String = ""
+    var price: Int = 0
 }
