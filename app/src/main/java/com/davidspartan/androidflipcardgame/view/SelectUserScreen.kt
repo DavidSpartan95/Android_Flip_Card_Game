@@ -195,7 +195,7 @@ fun CreateUserPopupBox(
                 .border(width = 1.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
                 .padding(20.dp)
         ) {
-            Text("No users found. Please create a new user.")
+            Text("Please type in a username you wish to use")
 
             Spacer(modifier = Modifier.height(16.dp))
 
