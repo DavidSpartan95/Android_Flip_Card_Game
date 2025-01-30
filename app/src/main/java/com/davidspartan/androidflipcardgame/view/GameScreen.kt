@@ -81,8 +81,18 @@ fun GameScreen(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.size(50.dp))
+
+            OptionButton(
+                text = "Quit Game",
+                theme = selectedUser!!.selectedTheme!!
+            ) {
+                navController.popBackStack()
+            }
         }
     }else{
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -100,6 +110,13 @@ fun GameScreen(
                 theme = selectedUser!!.selectedTheme!!
             ) {
                 gameViewModel.resetGame()
+            }
+            Spacer(modifier = Modifier.size(8.dp))
+            OptionButton(
+                text = "Quit Game",
+                theme = selectedUser!!.selectedTheme!!
+            ) {
+                navController.popBackStack()
             }
         }
     }
