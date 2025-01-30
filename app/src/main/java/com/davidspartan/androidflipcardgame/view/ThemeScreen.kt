@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -42,6 +44,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.R
@@ -183,9 +186,9 @@ fun ThemeSample(theme: Theme, currentlySelected: Boolean, function: () -> Unit) 
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
+
+                AutoResizedTextWithBackground(
                     text = theme.name,
-                    color = stringToColor(theme.textHexColor),
                     style = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
@@ -196,8 +199,8 @@ fun ThemeSample(theme: Theme, currentlySelected: Boolean, function: () -> Unit) 
                             shape = RoundedCornerShape(8.dp)
                         )
                         .padding(8.dp),
-
-                    )
+                    color = stringToColor(theme.textHexColor)
+                )
             }
         }
         if (currentlySelected) {
@@ -216,4 +219,45 @@ fun ThemeSample(theme: Theme, currentlySelected: Boolean, function: () -> Unit) 
             }
         }
     }
+}
+
+@Composable
+fun AutoResizedTextWithBackground(
+    text: String,
+    style: TextStyle,
+    modifier: Modifier,
+    color: Color = style.color
+) {
+    var resizedTextStyle by remember {
+        mutableStateOf(style)
+    }
+    var shouldDraw by remember {
+        mutableStateOf(false)
+    }
+    val defaultFontSize = MaterialTheme.typography.bodySmall.fontSize
+    Text(
+        text = text,
+        color = color,
+        modifier = modifier.drawWithContent {
+            if (shouldDraw){
+                drawContent()
+            }
+        },
+        softWrap = false,
+        style = resizedTextStyle,
+        onTextLayout = { result ->
+            if (result.didOverflowWidth) {
+                if(style.fontSize.isUnspecified){
+                    resizedTextStyle = resizedTextStyle.copy(
+                        fontSize = defaultFontSize
+                    )
+                }
+                resizedTextStyle = resizedTextStyle.copy(
+                    fontSize = resizedTextStyle.fontSize * 0.95
+                )
+            }else{
+                shouldDraw = true
+            }
+        }
+    )
 }

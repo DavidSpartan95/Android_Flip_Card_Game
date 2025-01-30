@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -62,6 +63,7 @@ fun SelectUserScreen(
     val showInfoDialog = remember { mutableStateOf(false) }
     var userSelected by remember { mutableStateOf<User?>(null) }
     val context = LocalContext.current
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     Box(
         modifier = Modifier
@@ -118,7 +120,7 @@ fun SelectUserScreen(
                                 viewModel.selectUser(user)
                                 navController.navigate(Home)
                             }
-                            .width(250.dp)
+                            .width(screenWidth * 0.45f)
                     ) {
                         Text(
                             text = user.name,
