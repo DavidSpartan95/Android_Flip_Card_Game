@@ -6,10 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.davidspartan.androidflipcardgame.view.GameScreen
 import com.davidspartan.androidflipcardgame.view.HomeScreen
-import com.davidspartan.androidflipcardgame.view.NewUserScreen
+import com.davidspartan.androidflipcardgame.view.SelectUserScreen
 import com.davidspartan.androidflipcardgame.view.SettingsScreen
 import com.davidspartan.androidflipcardgame.view.ThemeScreen
-import com.davidspartan.androidflipcardgame.view.components.FlipCard
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
 import kotlinx.serialization.Serializable
 
@@ -42,7 +41,7 @@ fun NavHost(
             )
         }
         composable<NewUser> {
-            NewUserScreen(
+            SelectUserScreen(
                 viewModel = viewModel,
                 navController = navController
             )

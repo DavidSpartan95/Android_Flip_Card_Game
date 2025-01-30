@@ -44,66 +44,78 @@ fun HomeScreen(
 
     if (selectedUser == null) {
         // Show message when no user is logged in
-        Text(
-            text = "No user is logged in.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-    } else {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor))
-                .padding(WindowInsets.statusBars.asPaddingValues())
-            ,
-            Alignment.TopCenter
+                .padding(WindowInsets.statusBars.asPaddingValues()),
+            contentAlignment = Alignment.Center
         ){
-            Column(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            Text(
+                text = "No user is logged in.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
 
-                ThemedText(
-                    text = "User: ${selectedUser!!.name}",
-                    theme = selectedUser!!.selectedTheme!!
-                )
-
-                Spacer(modifier = Modifier.size(5.dp))
-
-                ThemedText(
-                    text = "Points: ${selectedUser!!.score}",
-                    theme = selectedUser!!.selectedTheme!!
-                )
-            }
-            Column(
+    } else {
+        selectedUser?.let { user ->
+            Box(
                 modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxSize()
+                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
+                contentAlignment = Alignment.TopCenter
             ) {
-                // Display content when a user is logged in
-                OptionButton(
-                    text = "Play",
-                    theme = selectedUser!!.selectedTheme!!
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    navController.navigate(Game)
+                    ThemedText(
+                        text = "User: ${user.name}",
+                        theme = user.selectedTheme!!
+                    )
+
+                    Spacer(modifier = Modifier.size(5.dp))
+
+                    ThemedText(
+                        text = "Points: ${user.score}",
+                        theme = user.selectedTheme!!
+                    )
                 }
 
-                Spacer(modifier = Modifier.size(5.dp))
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Display content when a user is logged in
+                    OptionButton(
+                        text = "Play",
+                        theme = user.selectedTheme!!
+                    ) {
+                        navController.navigate(Game)
+                    }
 
-                OptionButton(
-                    text = "Themes",
-                    theme = selectedUser!!.selectedTheme!!
-                ) { navController.navigate(Appearance) }
+                    Spacer(modifier = Modifier.size(5.dp))
 
-                Spacer(modifier = Modifier.size(5.dp))
+                    OptionButton(
+                        text = "Themes",
+                        theme = user.selectedTheme!!
+                    ) {
+                        navController.navigate(Appearance)
+                    }
 
-                OptionButton(
-                    text = "Settings",
-                    theme = selectedUser!!.selectedTheme!!
-                ) { navController.navigate(Settings) }
+                    Spacer(modifier = Modifier.size(5.dp))
+
+                    OptionButton(
+                        text = "Go Back To Login",
+                        theme = user.selectedTheme!!
+                    ) {
+                        navController.popBackStack()
+                    }
+                }
             }
         }
     }

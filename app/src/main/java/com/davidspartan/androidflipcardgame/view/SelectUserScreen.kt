@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -35,18 +38,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.model.AllThemes
 import com.davidspartan.androidflipcardgame.model.isValidUsernameForUser
 import com.davidspartan.androidflipcardgame.model.realm.User
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
+import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
 
 @Composable
-fun NewUserScreen(
+fun SelectUserScreen(
     navController: NavHostController,
     viewModel: UserRepositoryViewModel
 ) {
@@ -58,34 +64,33 @@ fun NewUserScreen(
     val context = LocalContext.current
 
     Box(
-        contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(stringToColor(AllThemes[0].secondaryHexColor))
+            .background(stringToColor(AllThemes[0].primaryHexColor)),
+        contentAlignment = Alignment.TopCenter
     ) {
 
         Column(
             Modifier
-                .padding(16.dp),
+                .padding(16.dp)
+                .padding(WindowInsets.statusBars.asPaddingValues())
+            ,
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                colors = ButtonDefaults.buttonColors(containerColor = stringToColor(AllThemes[0].primaryHexColor)),
-                onClick = {
-                    if (users.size>=8) {
-                        Toast.makeText(
-                            context,
-                            "Max 8 users allowed.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        showPopup.value = true
-                    }
-                }
+            OptionButton(
+                text = "Create New User",
+                theme = AllThemes[0]
             ) {
-                Text("Create New User")
+                if (users.size>=8) {
+                    Toast.makeText(context, "Max 8 users allowed.", Toast.LENGTH_SHORT).show()
+                } else {
+                    showPopup.value = true
+                }
             }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
             users.forEach { user ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -105,7 +110,7 @@ fun NewUserScreen(
                         modifier = Modifier
                             .padding(8.dp)
                             .background(
-                                color = stringToColor(AllThemes[0].primaryHexColor),
+                                color = stringToColor(AllThemes[0].secondaryHexColor),
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .padding(8.dp)
@@ -117,8 +122,9 @@ fun NewUserScreen(
                     ) {
                         Text(
                             text = user.name,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = stringToColor(AllThemes[0].secondaryHexColor) // Text color contrasting the background
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = stringToColor(AllThemes[0].textHexColor)
                         )
                     }
                     Icon(
