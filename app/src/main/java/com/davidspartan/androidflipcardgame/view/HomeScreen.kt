@@ -73,7 +73,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.size(5.dp))
 
                 ThemedText(
-                    text = "Score: ${selectedUser!!.score}",
+                    text = "Points: ${selectedUser!!.score}",
                     theme = selectedUser!!.selectedTheme!!
                 )
             }

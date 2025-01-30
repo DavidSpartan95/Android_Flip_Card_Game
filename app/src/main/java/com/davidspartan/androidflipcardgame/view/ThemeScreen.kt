@@ -121,7 +121,7 @@ fun ThemeScreen(
                 Spacer(modifier = Modifier.size(50.dp))
 
                 OptionButton(
-                    text = "Go Back ",
+                    text = "Go To Menu",
                     theme = user.selectedTheme!!
                 ) {
                     navController.popBackStack()

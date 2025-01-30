@@ -85,7 +85,7 @@ fun GameScreen(
             Spacer(modifier = Modifier.size(50.dp))
 
             OptionButton(
-                text = "Quit Game",
+                text = "Go To Menu",
                 theme = selectedUser!!.selectedTheme!!
             ) {
                 navController.popBackStack()
@@ -113,7 +113,7 @@ fun GameScreen(
             }
             Spacer(modifier = Modifier.size(8.dp))
             OptionButton(
-                text = "Quit Game",
+                text = "Go To Menu",
                 theme = selectedUser!!.selectedTheme!!
             ) {
                 navController.popBackStack()
