@@ -127,7 +127,7 @@ fun ThemeScreen(
                     text = "Go To Menu",
                     theme = user.selectedTheme!!
                 ) {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 }
             }
 

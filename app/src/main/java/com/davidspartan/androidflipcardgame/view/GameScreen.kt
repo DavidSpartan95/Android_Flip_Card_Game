@@ -88,7 +88,7 @@ fun GameScreen(
                 text = "Go To Menu",
                 theme = selectedUser!!.selectedTheme!!
             ) {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         }
     }else{
@@ -116,7 +116,7 @@ fun GameScreen(
                 text = "Go To Menu",
                 theme = selectedUser!!.selectedTheme!!
             ) {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         }
     }

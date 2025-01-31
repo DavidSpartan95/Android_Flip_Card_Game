@@ -25,7 +25,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.davidspartan.androidflipcardgame.model.debouncedClickHandler
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
@@ -39,7 +41,7 @@ fun HomeScreen(
     navController: NavHostController,
     viewModel: UserRepositoryViewModel
 ) {
-    val selectedUser by viewModel.selectedUser.collectAsState(initial = null)
+    val selectedUser by viewModel.selectedUser.collectAsState()
 
 
     if (selectedUser == null) {
@@ -113,7 +115,8 @@ fun HomeScreen(
                         text = "Go Back To Login",
                         theme = user.selectedTheme!!
                     ) {
-                        navController.popBackStack()
+                        navController.navigateUp()
+
                     }
                 }
             }
