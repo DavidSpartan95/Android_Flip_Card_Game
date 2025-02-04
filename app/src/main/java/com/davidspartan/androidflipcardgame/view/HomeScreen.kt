@@ -43,7 +43,6 @@ fun HomeScreen(
 ) {
     val selectedUser by viewModel.selectedUser.collectAsState()
 
-
     if (selectedUser == null) {
         // Show message when no user is logged in
         Box(
