@@ -25,7 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.davidspartan.androidflipcardgame.R
@@ -42,6 +44,7 @@ fun FlipCard(
     // Bind the `isFlipped` state to `card.isFlipped`
     val isFlipped by rememberUpdatedState(card.isFlipped)
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val colorTag = "card_color_${card.color.toArgb()}" // Convert color to a unique tag
 
     // Animate the rotation angle
     val rotation by animateFloatAsState(
@@ -60,7 +63,9 @@ fun FlipCard(
             .graphicsLayer {
                 rotationY = rotation // Apply the rotation animation
                 cameraDistance = 12f * density // Adjust for better 3D effect
-            },
+            }
+            .testTag(colorTag),
+
         contentAlignment = Alignment.Center
     ){
 
