@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.model.stringToColor
@@ -51,6 +52,7 @@ fun GameScreen(
             color = MaterialTheme.colorScheme.onSurface
         )
     } else if (!gameState.isGameOver) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,7 +98,8 @@ fun GameScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor)),
+                .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor))
+            ,
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){

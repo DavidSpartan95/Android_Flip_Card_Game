@@ -27,8 +27,11 @@ class GameViewModel : ViewModel() {
         // Observe changes in gameState and react when flippedCards reaches 2
         viewModelScope.launch {
             flippedCards.collect { state ->
+                println("Flipped Cards: $state")
+                println("score : ${gameState.value.score}")
                 if (state == 2) {
                     delay(700)
+                    println("waited 700mls")
                     if (checkCards()){
                         incrementScore()
                     }else{
