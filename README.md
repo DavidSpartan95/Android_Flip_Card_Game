@@ -5,7 +5,7 @@
 To install the app on your Android device, follow these steps:
 
 1. Click the link below to access the APK file:  
-   [Download APK](https://drive.google.com/drive/folders/1GNe3llRONVPs7nbJlvuzw3fudisPAX5y)
+   [Download APK](https://drive.google.com/file/d/1rCRErEFGD1tOoz52x8rYqmhb2ZngR6IB/view?usp=sharing)
 2. Download the APK file to your phone.
 3. Locate the downloaded file and tap to install it.  
    *(You may need to enable "Install from Unknown Sources" in your phone's settings.)*
