@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Android Flip Card Game"
 include(":app")
- 
+include(":tv")
