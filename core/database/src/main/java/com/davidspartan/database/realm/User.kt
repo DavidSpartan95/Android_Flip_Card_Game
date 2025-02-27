@@ -1,6 +1,5 @@
-package com.davidspartan.androidflipcardgame.model.realm
+package com.davidspartan.database.realm
 
-import com.davidspartan.androidflipcardgame.model.AllThemes
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject

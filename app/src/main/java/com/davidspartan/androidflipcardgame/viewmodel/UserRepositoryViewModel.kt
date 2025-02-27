@@ -2,9 +2,6 @@ package com.davidspartan.androidflipcardgame.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidspartan.androidflipcardgame.model.realm.MyApp
-import com.davidspartan.androidflipcardgame.model.realm.Theme
-import com.davidspartan.androidflipcardgame.model.realm.User
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,10 +13,10 @@ import org.mongodb.kbson.ObjectId
 
 class UserRepositoryViewModel : ViewModel() {
 
-    private val realm = MyApp.realm
+    private val realm = com.davidspartan.database.realm.MyApp.realm
 
     val users = realm
-        .query<User>()
+        .query<com.davidspartan.database.realm.User>()
         .asFlow()
         .map { results ->
             results.list.toList()
@@ -30,45 +27,44 @@ class UserRepositoryViewModel : ViewModel() {
             emptyList()
         )
 
-    private val _selectedUser = MutableStateFlow<User?>(null)
-    val selectedUser: StateFlow<User?> = _selectedUser
+    private val _selectedUser = MutableStateFlow<com.davidspartan.database.realm.User?>(null)
+    val selectedUser: StateFlow<com.davidspartan.database.realm.User?> = _selectedUser
 
 
-    fun selectUser(user: User) {
+    fun selectUser(user: com.davidspartan.database.realm.User) {
         _selectedUser.value = user
-
     }
 
-    fun selectTheme(user: User, theme: Theme) {
+    fun selectTheme(user: com.davidspartan.database.realm.User, theme: com.davidspartan.database.realm.Theme) {
         if (!userHasThemeWithName(user, theme.name)) return
 
         viewModelScope.launch {
             realm.write {
-                val queryUser = query<User>("id == $0", user.id).find().first()
+                val queryUser = query<com.davidspartan.database.realm.User>("id == $0", user.id).find().first()
                 queryUser.selectedTheme = theme
             }
-            val updateUser = realm.query<User>("id == $0", user.id).find().first()
+            val updateUser = realm.query<com.davidspartan.database.realm.User>("id == $0", user.id).find().first()
             selectUser(updateUser)
         }
     }
 
-    fun addThemeToUser(userId: ObjectId, theme: Theme) {
+    fun addThemeToUser(userId: ObjectId, theme: com.davidspartan.database.realm.Theme) {
         viewModelScope.launch {
             realm.write {
-                val user = query<User>("id == $0", userId).find().first()
+                val user = query<com.davidspartan.database.realm.User>("id == $0", userId).find().first()
                 user.themes.add(theme)
             }
-            val updateUser = realm.query<User>("id == $0", userId).find().first()
+            val updateUser = realm.query<com.davidspartan.database.realm.User>("id == $0", userId).find().first()
             selectUser(updateUser)
         }
     }
 
-    fun purchaseTheme(user: User, theme: Theme): Boolean {
+    fun purchaseTheme(user: com.davidspartan.database.realm.User, theme: com.davidspartan.database.realm.Theme): Boolean {
         if (user.score < theme.price) return false
 
         viewModelScope.launch {
             realm.write {
-                val queryUser = query<User>("id == $0", user.id).find().first()
+                val queryUser = query<com.davidspartan.database.realm.User>("id == $0", user.id).find().first()
                 queryUser.score -= theme.price
                 queryUser.themes.add(theme)
             }
@@ -82,7 +78,7 @@ class UserRepositoryViewModel : ViewModel() {
 
     fun addUser(name: String) {
         // Create a default theme
-        val defaultTheme = Theme().apply {
+        val defaultTheme = com.davidspartan.database.realm.Theme().apply {
             this.name = "Default"
             primaryHexColor = "#7b9acc"
             secondaryHexColor = "#FCF6F5"
@@ -91,7 +87,7 @@ class UserRepositoryViewModel : ViewModel() {
         }
 
         // Create a new user with the default theme
-        val newUser = User().apply {
+        val newUser = com.davidspartan.database.realm.User().apply {
             this.name = name
             this.themes.add(defaultTheme)
             this.selectedTheme = defaultTheme
@@ -103,7 +99,7 @@ class UserRepositoryViewModel : ViewModel() {
         }
     }
 
-    fun userHasThemeWithName(user: User?, themeName: String): Boolean {
+    fun userHasThemeWithName(user: com.davidspartan.database.realm.User?, themeName: String): Boolean {
         if (user == null) return false
         user.themes.forEach { theme ->
             if (theme.name == themeName) {
@@ -116,16 +112,16 @@ class UserRepositoryViewModel : ViewModel() {
     fun editUser(userId: ObjectId, newName: String) {
         viewModelScope.launch {
             realm.write {
-                val user = query<User>("id == $0", userId).find().first()
+                val user = query<com.davidspartan.database.realm.User>("id == $0", userId).find().first()
                 user.name = newName
             }
         }
     }
 
-    fun deleteUser(user: User) {
+    fun deleteUser(user: com.davidspartan.database.realm.User) {
         viewModelScope.launch {
             realm.write {
-                val deleteUser = query<User>("id == $0", user.id).find().first()
+                val deleteUser = query<com.davidspartan.database.realm.User>("id == $0", user.id).find().first()
                 delete(deleteUser)
             }
         }
@@ -135,10 +131,10 @@ class UserRepositoryViewModel : ViewModel() {
         viewModelScope.launch {
 
             realm.write {
-                val user = query<User>("id == $0", userId).find().first()
+                val user = query<com.davidspartan.database.realm.User>("id == $0", userId).find().first()
                 user.score += score
             }
-            val updateUser = realm.query<User>("id == $0", userId).find().first()
+            val updateUser = realm.query<com.davidspartan.database.realm.User>("id == $0", userId).find().first()
             selectUser(updateUser)
         }
     }

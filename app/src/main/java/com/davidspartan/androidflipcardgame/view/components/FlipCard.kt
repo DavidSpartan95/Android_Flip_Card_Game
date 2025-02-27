@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,11 +12,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,8 +27,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.davidspartan.androidflipcardgame.R
-import com.davidspartan.androidflipcardgame.model.game.Card
-import com.davidspartan.androidflipcardgame.model.realm.Theme
+import com.davidspartan.model.Card
+import com.davidspartan.database.realm.Theme
 import com.davidspartan.androidflipcardgame.model.stringToColor
 
 @Composable
@@ -44,7 +40,7 @@ fun FlipCard(
     // Bind the `isFlipped` state to `card.isFlipped`
     val isFlipped by rememberUpdatedState(card.isFlipped)
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val colorTag = "card_color_${card.color.toArgb()}" // Convert color to a unique tag
+    val colorTag = "card_color_${card.color}" // Convert color to a unique tag
 
     // Animate the rotation angle
     val rotation by animateFloatAsState(
@@ -99,7 +95,7 @@ fun FlipCard(
                     painter = painterResource(id = R.drawable.android_card_front),
                     contentDescription = "Card Back",
                     modifier = Modifier.fillMaxSize(),
-                    colorFilter = ColorFilter.tint(card.color)
+                    colorFilter = ColorFilter.tint(Color.Red) // TODO THIS SHOULD USE THE CARD COLOR
                 )
             }
         }

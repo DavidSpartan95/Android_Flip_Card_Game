@@ -1,6 +1,5 @@
-package com.davidspartan.androidflipcardgame.model
+package com.davidspartan.database.realm
 
-import com.davidspartan.androidflipcardgame.model.realm.Theme
 
 val AllThemes = listOf(
     Theme().apply {

@@ -1,4 +1,4 @@
-package com.davidspartan.androidflipcardgame.model.realm
+package com.davidspartan.database.realm
 
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey

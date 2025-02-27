@@ -1,8 +1,8 @@
-package com.davidspartan.androidflipcardgame.model.game
+package com.davidspartan.model
 
 data class Card(
     val id: String = java.util.UUID.randomUUID().toString(),
-    val color: androidx.compose.ui.graphics.Color,
+    val color: String,
     var isFlipped: Boolean = false,
     var found: Boolean = false
 
