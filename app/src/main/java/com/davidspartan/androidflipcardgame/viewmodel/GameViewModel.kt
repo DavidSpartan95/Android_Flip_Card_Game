@@ -52,15 +52,15 @@ class GameViewModel : ViewModel() {
     private fun generateCards() {
 
         val colors = listOf(
-            Color.Red,
-            Color.Blue,
-            Color.Green
+            "#FF0000",
+            "#0000FF",
+            "#00FF00"
         )
-
+        println(Color.Red.toString())
         val pairedCards = colors.flatMap { color ->
             listOf(
-                Card(color = color.toString()),
-                Card(color = color.toString())
+                Card(hexColor = color.toString()),
+                Card(hexColor = color.toString())
             )
         }
 
@@ -106,7 +106,7 @@ class GameViewModel : ViewModel() {
         // Check if exactly two cards are flipped
         if (flippedCards.size == 2){
 
-            if(flippedCards[0].color == flippedCards[1].color){
+            if(flippedCards[0].hexColor == flippedCards[1].hexColor){
 
                 _cards.value = _cards.value.map { existingCard ->
                     //Mark the two cards as found

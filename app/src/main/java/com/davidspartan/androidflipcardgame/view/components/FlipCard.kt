@@ -15,13 +15,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -40,7 +38,7 @@ fun FlipCard(
     // Bind the `isFlipped` state to `card.isFlipped`
     val isFlipped by rememberUpdatedState(card.isFlipped)
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val colorTag = "card_color_${card.color}" // Convert color to a unique tag
+    val colorTag = "card_color_${card.hexColor}" // Convert color to a unique tag
 
     // Animate the rotation angle
     val rotation by animateFloatAsState(
@@ -95,7 +93,7 @@ fun FlipCard(
                     painter = painterResource(id = R.drawable.android_card_front),
                     contentDescription = "Card Back",
                     modifier = Modifier.fillMaxSize(),
-                    colorFilter = ColorFilter.tint(Color.Red) // TODO THIS SHOULD USE THE CARD COLOR
+                    colorFilter = ColorFilter.tint(stringToColor(card.hexColor))
                 )
             }
         }
