@@ -27,7 +27,7 @@ import com.davidspartan.androidflipcardgame.model.stringToColor
 @Composable
 fun OptionButton(
     text: String,
-    theme: com.davidspartan.database.realm.Theme,
+    theme: Theme,
     onClick: () -> Unit
 ) {
     val config = LocalConfiguration.current
