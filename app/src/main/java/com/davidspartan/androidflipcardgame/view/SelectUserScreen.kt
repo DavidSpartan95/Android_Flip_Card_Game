@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,9 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.davidspartan.androidflipcardgame.model.AllThemes
+import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.isValidUsernameForUser
-import com.davidspartan.androidflipcardgame.model.realm.User
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
@@ -62,7 +60,7 @@ fun SelectUserScreen(
     val showPopup = remember { mutableStateOf(false) } // Track if popup is visible
     val showDeleteDialog = remember { mutableStateOf(false) }
     val showInfoDialog = remember { mutableStateOf(false) }
-    var userSelected by remember { mutableStateOf<User?>(null) }
+    var userSelected by remember { mutableStateOf<com.davidspartan.database.realm.User?>(null) }
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 

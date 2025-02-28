@@ -47,9 +47,12 @@ android {
 }
 
 dependencies {
+
     implementation(libs.core.ktx)
 
     implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation(project(":core:database"))
+    implementation(project(":core:model"))
     ksp("com.google.dagger:hilt-android-compiler:2.51.1")
     ksp("com.google.dagger:hilt-compiler:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")

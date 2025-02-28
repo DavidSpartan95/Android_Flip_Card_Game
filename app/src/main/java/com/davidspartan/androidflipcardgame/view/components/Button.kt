@@ -20,7 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.isUnspecified
-import com.davidspartan.androidflipcardgame.model.realm.Theme
+import com.davidspartan.database.realm.Theme
 import com.davidspartan.androidflipcardgame.model.stringToColor
 
 

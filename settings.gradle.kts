@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Android Flip Card Game"
 include(":app")
- 
+include(":core:database")
+include(":core:model")

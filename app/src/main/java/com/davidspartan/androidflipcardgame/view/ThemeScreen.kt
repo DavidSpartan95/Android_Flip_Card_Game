@@ -1,7 +1,6 @@
 package com.davidspartan.androidflipcardgame.view
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,24 +33,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.davidspartan.androidflipcardgame.R
-import com.davidspartan.androidflipcardgame.model.AllThemes
-import com.davidspartan.androidflipcardgame.model.realm.Theme
+import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
-import com.davidspartan.androidflipcardgame.view.components.FlipCard
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
@@ -160,7 +151,7 @@ fun ThemeScreen(
 }
 
 @Composable
-fun ThemeSample(theme: Theme, currentlySelected: Boolean, function: () -> Unit) {
+fun ThemeSample(theme: com.davidspartan.database.realm.Theme, currentlySelected: Boolean, function: () -> Unit) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
