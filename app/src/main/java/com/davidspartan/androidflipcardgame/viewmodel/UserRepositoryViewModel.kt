@@ -2,6 +2,8 @@ package com.davidspartan.androidflipcardgame.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.davidspartan.database.realm.MyApp
+import com.davidspartan.database.realm.User
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,10 +15,10 @@ import org.mongodb.kbson.ObjectId
 
 class UserRepositoryViewModel : ViewModel() {
 
-    private val realm = com.davidspartan.database.realm.MyApp.realm
+    private val realm = MyApp.realm
 
     val users = realm
-        .query<com.davidspartan.database.realm.User>()
+        .query<User>()
         .asFlow()
         .map { results ->
             results.list.toList()
@@ -27,11 +29,11 @@ class UserRepositoryViewModel : ViewModel() {
             emptyList()
         )
 
-    private val _selectedUser = MutableStateFlow<com.davidspartan.database.realm.User?>(null)
-    val selectedUser: StateFlow<com.davidspartan.database.realm.User?> = _selectedUser
+    private val _selectedUser = MutableStateFlow<User?>(null)
+    val selectedUser: StateFlow<User?> = _selectedUser
 
 
-    fun selectUser(user: com.davidspartan.database.realm.User) {
+    fun selectUser(user: User) {
         _selectedUser.value = user
     }
 
