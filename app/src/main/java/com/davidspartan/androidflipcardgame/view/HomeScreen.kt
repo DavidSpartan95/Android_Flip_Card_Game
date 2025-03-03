@@ -27,11 +27,12 @@ import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.navigation.Appearance
 import com.davidspartan.androidflipcardgame.view.navigation.Game
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    viewModel: UserRepositoryViewModel
+    viewModel: UserRepositoryViewModel = koinViewModel()
 ) {
     val selectedUser by viewModel.selectedUser.collectAsState()
 

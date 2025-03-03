@@ -47,6 +47,9 @@ android {
 dependencies {
 
     implementation(libs.core.ktx)
+    
+    implementation (libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.compose.navigation)
 
     implementation(project(":core:database"))
     implementation(project(":core:model"))

@@ -47,11 +47,12 @@ import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ThemeScreen(
     navController: NavHostController,
-    viewModel: UserRepositoryViewModel
+    viewModel: UserRepositoryViewModel = koinViewModel()
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val selectedUser by viewModel.selectedUser.collectAsState(initial = null)

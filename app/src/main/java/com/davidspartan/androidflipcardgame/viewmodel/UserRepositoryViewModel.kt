@@ -2,7 +2,7 @@ package com.davidspartan.androidflipcardgame.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidspartan.database.realm.MyApp
+import com.davidspartan.database.realm.MyRealm
 import com.davidspartan.database.realm.User
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import org.mongodb.kbson.ObjectId
 
 class UserRepositoryViewModel : ViewModel() {
 
-    private val realm = MyApp.realm
+    private val realm = MyRealm.realm
 
     val users = realm
         .query<User>()
