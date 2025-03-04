@@ -50,11 +50,12 @@ import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SelectUserScreen(
     navController: NavHostController,
-    viewModel: UserRepositoryViewModel
+    viewModel: UserRepositoryViewModel = koinViewModel()
 ) {
     val users by viewModel.users.collectAsState(initial = emptyList()) // Provide an initial value
     val showPopup = remember { mutableStateOf(false) } // Track if popup is visible

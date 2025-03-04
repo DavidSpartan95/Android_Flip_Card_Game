@@ -26,13 +26,14 @@ import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GameScreen(
     navController: NavHostController,
-    viewModel: UserRepositoryViewModel,
+    viewModel: UserRepositoryViewModel = koinViewModel(),
+    gameViewModel: GameViewModel = koinViewModel()
 ) {
-    var gameViewModel = remember { GameViewModel() }
     val selectedUser by viewModel.selectedUser.collectAsState(initial = null)
     val cards by gameViewModel.cards.collectAsState()
     val gameState by gameViewModel.gameState.collectAsState()
