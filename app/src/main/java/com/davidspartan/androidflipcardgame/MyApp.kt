@@ -7,7 +7,7 @@ import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
 
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
-import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
+import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.database.realm.MyRealm
 import com.davidspartan.database.realm.Theme
 import com.davidspartan.database.realm.User
@@ -38,7 +38,7 @@ class MyApp : Application() {
 val appModule = module {
 
     viewModelOf(::GameViewModel)
-    singleOf(::UserRepositoryViewModel)
+    singleOf(::UserFlowViewModel)
 
 
 }

@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -46,109 +49,127 @@ import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
-import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
+import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
+import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ThemeScreen(
     navController: NavHostController,
-    viewModel: UserRepositoryViewModel = koinViewModel()
+    viewModel: UserFlowViewModel = koinViewModel()
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val selectedUser by viewModel.selectedUser.collectAsState(initial = null)
+    val uiState by viewModel.uiState.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
     var themeSelectedForPurchase by remember { mutableStateOf(AllThemes[0]) }
     val context = LocalContext.current
 
-    selectedUser?.let { user ->
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(stringToColor(user.selectedTheme!!.primaryHexColor))
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+    when(uiState){
+        is UserUiState.LoggedIn -> {
+            val user = (uiState as UserUiState.LoggedIn).selectedUser
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
             ) {
-                ThemedText(
-                    text = "Points: ${user.score}",
-                    theme = user.selectedTheme!!
-                )
-
-                Spacer(modifier = Modifier.size(50.dp))
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3), // 3 cards per row
-                    modifier = Modifier,
-                    verticalArrangement = Arrangement.Center
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(AllThemes) { theme -> // Iterate over each card directly
+                    ThemedText(
+                        text = "Points: ${user.score}",
+                        theme = user.selectedTheme!!
+                    )
 
-                        Box {
+                    Spacer(modifier = Modifier.size(50.dp))
 
-                            ThemeSample(
-                                theme,
-                                theme.name == user.selectedTheme!!.name
-                            ) {
-                                viewModel.selectTheme(user, theme)
-                            }
-                            if (!viewModel.userHasThemeWithName(user, theme.name)) {
-                                Box(
-                                    modifier = Modifier
-                                        .padding(16.dp)
-                                        .size(screenWidth * 0.25f)
-                                        .background(
-                                            color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
-                                            shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
-                                        )
-                                        .clickable {
-                                            themeSelectedForPurchase = theme
-                                            showDeleteDialog = true
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3), // 3 cards per row
+                        modifier = Modifier,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        items(AllThemes) { theme -> // Iterate over each card directly
 
-                                        },
-                                )
+                            Box {
+
+                                ThemeSample(
+                                    theme,
+                                    theme.name == user.selectedTheme!!.name
+                                ) {
+                                    viewModel.selectTheme(user, theme)
+                                }
+                                if (!viewModel.userHasThemeWithName(user, theme.name)) {
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .size(screenWidth * 0.25f)
+                                            .background(
+                                                color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
+                                                shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
+                                            )
+                                            .clickable {
+                                                themeSelectedForPurchase = theme
+                                                showDeleteDialog = true
+
+                                            },
+                                    )
+                                }
                             }
                         }
+
                     }
 
+                    Spacer(modifier = Modifier.size(50.dp))
+
+                    OptionButton(
+                        text = "Go To Menu",
+                        theme = user.selectedTheme!!
+                    ) {
+                        navController.navigateUp()
+                    }
                 }
 
-                Spacer(modifier = Modifier.size(50.dp))
+                if (showDeleteDialog) {
+                    DialogPopup(
+                        onDismissRequest = { showDeleteDialog = false },
+                        onConfirmation = {
 
-                OptionButton(
-                    text = "Go To Menu",
-                    theme = user.selectedTheme!!
-                ) {
-                    navController.navigateUp()
+                            if (viewModel.purchaseTheme(user, themeSelectedForPurchase)) {
+                                viewModel.selectTheme(user, themeSelectedForPurchase)
+                                showDeleteDialog = false
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                        },
+                        dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
+                        dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
+                        icon = Icons.Default.ShoppingCart
+                    )
                 }
+
             }
-
-            if (showDeleteDialog) {
-                DialogPopup(
-                    onDismissRequest = { showDeleteDialog = false },
-                    onConfirmation = {
-
-                        if (viewModel.purchaseTheme(user, themeSelectedForPurchase)) {
-                            viewModel.selectTheme(user, themeSelectedForPurchase)
-                            showDeleteDialog = false
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "You need ${themeSelectedForPurchase.price - selectedUser!!.score} more points to unlock this theme",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                    },
-                    dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
-                    dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
-                    icon = Icons.Default.ShoppingCart
+        }
+        UserUiState.LoggedOut -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    text = "No user is logged in.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
-
         }
     }
-
 }
 
 @Composable
