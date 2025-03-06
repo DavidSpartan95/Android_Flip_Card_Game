@@ -1,13 +1,15 @@
 package com.davidspartan.androidflipcardgame.viewmodel
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidspartan.model.GameState
 import com.davidspartan.model.Card
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class GameViewModel : ViewModel() {
@@ -15,11 +17,28 @@ class GameViewModel : ViewModel() {
     private val _gameState = MutableStateFlow(GameState())
     val gameState: MutableStateFlow<GameState> = _gameState
 
-    private val _cards = MutableStateFlow<List<com.davidspartan.model.Card>>(emptyList())
-    val cards: MutableStateFlow<List<com.davidspartan.model.Card>> = _cards
+    private val _cards = MutableStateFlow<List<Card>>(emptyList())
+    val cards: MutableStateFlow<List<Card>> = _cards
 
     private val _flippedCards = MutableStateFlow(0)
     private val flippedCards: StateFlow<Int> = _flippedCards
+
+
+    val uiState: StateFlow<GameUiState> = combine(
+        gameState,
+        flippedCards
+    ) { selectedId, userList ->
+        val state = gameState.value
+        if (state.isGameOver) {
+            GameUiState.GameOver(state)
+        } else {
+            GameUiState.Playing(state)
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = GameUiState.Playing(gameState.value)
+    )
 
     init {
         generateCards() // Generate cards when the ViewModel is created
@@ -27,11 +46,9 @@ class GameViewModel : ViewModel() {
         // Observe changes in gameState and react when flippedCards reaches 2
         viewModelScope.launch {
             flippedCards.collect { state ->
-                println("Flipped Cards: $state")
-                println("score : ${gameState.value.score}")
+
                 if (state == 2) {
                     delay(700)
-                    println("waited 700mls")
                     if (checkCards()){
                         incrementScore()
                     }else{
@@ -46,6 +63,7 @@ class GameViewModel : ViewModel() {
     private fun checkGameOver() {
         if (_cards.value.all { it.found }) {
             _gameState.value = _gameState.value.copy(isGameOver = true)
+
         }
     }
 
@@ -56,14 +74,12 @@ class GameViewModel : ViewModel() {
             "#0000FF",
             "#00FF00"
         )
-        println(Color.Red.toString())
         val pairedCards = colors.flatMap { color ->
             listOf(
-                Card(hexColor = color.toString()),
-                Card(hexColor = color.toString())
+                Card(hexColor = color),
+                Card(hexColor = color)
             )
         }
-
         _cards.value = pairedCards.shuffled()
     }
 
@@ -91,7 +107,7 @@ class GameViewModel : ViewModel() {
     fun flipBackCards() {
         // Update all cards with isFlipped = true to isFlipped = false
         _cards.value = _cards.value.map { card ->
-            println("Card ID: ${card.id}, isFlipped: ${card.isFlipped}, found: ${card.found}")
+
             if (card.isFlipped && !card.found) card.copy(isFlipped = false) else card
         }
 
@@ -129,8 +145,13 @@ class GameViewModel : ViewModel() {
     fun resetGame() {
         // Reset the game state to default values when starting a new game
         _gameState.value =
-            com.davidspartan.model.GameState(score = 0, totalFlips = 0, isGameOver = false)
+            GameState(score = 0, totalFlips = 0, isGameOver = false)
         generateCards() // Generate the cards again
     }
 
+}
+
+sealed interface GameUiState{
+    data class Playing(val gameState:GameState): GameUiState
+    data class GameOver(val gameState: GameState): GameUiState
 }

@@ -28,6 +28,7 @@ import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.FlipCard
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
+import com.davidspartan.androidflipcardgame.viewmodel.GameUiState
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
@@ -40,13 +41,15 @@ fun GameScreen(
     gameViewModel: GameViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val gameUiState by gameViewModel.uiState.collectAsState()
     val cards by gameViewModel.cards.collectAsState()
     val gameState by gameViewModel.gameState.collectAsState()
 
-    LaunchedEffect(gameState.isGameOver) {
-        print("Game over state changed: ${gameState.isGameOver}")
-        val selectedUser = (uiState as UserUiState.LoggedIn).selectedUser
-        viewModel.addScore(selectedUser.id, gameState.score)
+    LaunchedEffect(gameUiState) {
+        if (gameUiState is GameUiState.GameOver) {
+            val selectedUser = (uiState as UserUiState.LoggedIn).selectedUser
+            viewModel.addScore(selectedUser.id, gameState.score)
+        }
 
     }
 
@@ -55,78 +58,80 @@ fun GameScreen(
         is UserUiState.LoggedIn -> {
             val selectedUser = (uiState as UserUiState.LoggedIn).selectedUser
 
-            if (!gameState.isGameOver) {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor)),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    ThemedText(
-                        text = "${selectedUser!!.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
-                        theme = selectedUser!!.selectedTheme!!
-                    )
-                    Spacer(modifier = Modifier.size(50.dp))
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3), // 3 cards per row
+            when(gameUiState){
+                is GameUiState.GameOver -> {
+                    Column(
                         modifier = Modifier
-                            .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor)),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        items(cards) { card -> // Iterate over each card directly
-
-                            FlipCard(
-                                theme = selectedUser!!.selectedTheme!!,
-                                card = card
-                            ){
-                                gameViewModel.flipCard(
-                                    card = card
-                                )
-                            }
+                            .fillMaxSize()
+                            .background(stringToColor(selectedUser.selectedTheme!!.primaryHexColor))
+                        ,
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        ThemedText(
+                            text = "Result\nScore: ${gameState.score}\nTotal flips: ${gameState.totalFlips}",
+                            theme = selectedUser.selectedTheme!!
+                        )
+                        Spacer(modifier = Modifier.size(50.dp))
+                        OptionButton(
+                            text = "New Game",
+                            theme = selectedUser.selectedTheme!!
+                        ) {
+                            gameViewModel.resetGame()
+                        }
+                        Spacer(modifier = Modifier.size(8.dp))
+                        OptionButton(
+                            text = "Go To Menu",
+                            theme = selectedUser.selectedTheme!!
+                        ) {
+                            navController.navigateUp()
                         }
                     }
-
-                    Spacer(modifier = Modifier.size(50.dp))
-
-                    OptionButton(
-                        text = "Go To Menu",
-                        theme = selectedUser!!.selectedTheme!!
-                    ) {
-                        navController.navigateUp()
-                    }
                 }
-            }else{
+                is GameUiState.Playing -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(stringToColor(selectedUser.selectedTheme!!.primaryHexColor)),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        ThemedText(
+                            text = "${selectedUser.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
+                            theme = selectedUser.selectedTheme!!
+                        )
+                        Spacer(modifier = Modifier.size(50.dp))
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3), // 3 cards per row
+                            modifier = Modifier
+                                .background(stringToColor(selectedUser.selectedTheme!!.primaryHexColor)),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            items(cards) { card -> // Iterate over each card directly
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(stringToColor(selectedUser!!.selectedTheme!!.primaryHexColor))
-                    ,
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    ThemedText(
-                        text = "Result\nScore: ${gameState.score}\nTotal flips: ${gameState.totalFlips}",
-                        theme = selectedUser!!.selectedTheme!!
-                    )
-                    Spacer(modifier = Modifier.size(50.dp))
-                    OptionButton(
-                        text = "New Game",
-                        theme = selectedUser!!.selectedTheme!!
-                    ) {
-                        gameViewModel.resetGame()
-                    }
-                    Spacer(modifier = Modifier.size(8.dp))
-                    OptionButton(
-                        text = "Go To Menu",
-                        theme = selectedUser!!.selectedTheme!!
-                    ) {
-                        navController.navigateUp()
+                                FlipCard(
+                                    theme = selectedUser.selectedTheme!!,
+                                    card = card
+                                ){
+                                    gameViewModel.flipCard(
+                                        card = card
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.size(50.dp))
+
+                        OptionButton(
+                            text = "Go To Menu",
+                            theme = selectedUser.selectedTheme!!
+                        ) {
+                            navController.navigateUp()
+                        }
                     }
                 }
             }
+
         }
         UserUiState.LoggedOut -> {
             Box(
