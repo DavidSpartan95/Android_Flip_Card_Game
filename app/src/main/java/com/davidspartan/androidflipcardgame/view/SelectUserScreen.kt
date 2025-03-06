@@ -49,13 +49,13 @@ import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
-import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
+import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SelectUserScreen(
     navController: NavHostController,
-    viewModel: UserRepositoryViewModel = koinViewModel()
+    viewModel: UserFlowViewModel = koinViewModel()
 ) {
     val users by viewModel.users.collectAsState(initial = emptyList()) // Provide an initial value
     val showPopup = remember { mutableStateOf(false) } // Track if popup is visible
@@ -176,7 +176,7 @@ fun SelectUserScreen(
 
 @Composable
 fun CreateUserPopupBox(
-    viewModel: UserRepositoryViewModel,
+    viewModel: UserFlowViewModel,
     onDismiss: () -> Unit
 ) {
     var newUserName by remember { mutableStateOf("") }

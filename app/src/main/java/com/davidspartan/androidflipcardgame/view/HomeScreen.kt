@@ -20,39 +20,31 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.navigation.Appearance
 import com.davidspartan.androidflipcardgame.view.navigation.Game
-import com.davidspartan.androidflipcardgame.viewmodel.UserRepositoryViewModel
+import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
+import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    viewModel: UserRepositoryViewModel = koinViewModel()
+    viewModel: UserFlowViewModel = koinViewModel()
 ) {
-    val selectedUser by viewModel.selectedUser.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    if (selectedUser == null) {
-        // Show message when no user is logged in
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(WindowInsets.statusBars.asPaddingValues()),
-            contentAlignment = Alignment.Center
-        ){
-            Text(
-                text = "No user is logged in.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
 
-    } else {
-        selectedUser?.let { user ->
+    when(uiState){
+
+        is UserUiState.LoggedIn -> {
+
+            val user = (uiState as UserUiState.LoggedIn).selectedUser
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -111,6 +103,21 @@ fun HomeScreen(
 
                     }
                 }
+            }
+        }
+
+        UserUiState.LoggedOut -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    text = "No user is logged in.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }
