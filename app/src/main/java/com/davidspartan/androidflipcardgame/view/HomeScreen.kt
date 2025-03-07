@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +35,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    viewModel: UserFlowViewModel = koinViewModel()
+    viewModel: UserFlowViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -58,6 +59,7 @@ fun HomeScreen(
                         .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    //Button(onClick = { viewModel.getUserById(user.id) }) { }
                     ThemedText(
                         text = "User: ${user.name}",
                         theme = user.selectedTheme!!

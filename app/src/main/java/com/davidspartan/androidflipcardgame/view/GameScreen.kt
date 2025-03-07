@@ -37,7 +37,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun GameScreen(
     navController: NavHostController,
-    viewModel: UserFlowViewModel = koinViewModel(),
+    viewModel: UserFlowViewModel,
     gameViewModel: GameViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
