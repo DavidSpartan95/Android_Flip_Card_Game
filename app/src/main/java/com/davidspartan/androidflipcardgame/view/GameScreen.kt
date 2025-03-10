@@ -37,20 +37,19 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun GameScreen(
     navController: NavHostController,
-    viewModel: UserFlowViewModel = koinViewModel(),
+    viewModel: UserFlowViewModel,
     gameViewModel: GameViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val gameUiState by gameViewModel.uiState.collectAsState()
     val cards by gameViewModel.cards.collectAsState()
-    val gameState by gameViewModel.gameState.collectAsState()
 
     LaunchedEffect(gameUiState) {
         if (gameUiState is GameUiState.GameOver) {
             val selectedUser = (uiState as UserUiState.LoggedIn).selectedUser
+            val gameState = (gameUiState as GameUiState.GameOver).gameState
             viewModel.addScore(selectedUser.id, gameState.score)
         }
-
     }
 
     when(uiState){
@@ -60,6 +59,7 @@ fun GameScreen(
 
             when(gameUiState){
                 is GameUiState.GameOver -> {
+                    val gameState = (gameUiState as GameUiState.GameOver).gameState
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -89,6 +89,7 @@ fun GameScreen(
                     }
                 }
                 is GameUiState.Playing -> {
+                    val gameState = (gameUiState as GameUiState.Playing).gameState
                     Column(
                         modifier = Modifier
                             .fillMaxSize()

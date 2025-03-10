@@ -55,7 +55,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SelectUserScreen(
     navController: NavHostController,
-    viewModel: UserFlowViewModel = koinViewModel()
+    viewModel: UserFlowViewModel
 ) {
     val users by viewModel.users.collectAsState(initial = emptyList()) // Provide an initial value
     val showPopup = remember { mutableStateOf(false) } // Track if popup is visible

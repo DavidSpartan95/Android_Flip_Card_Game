@@ -51,12 +51,11 @@ import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ThemeScreen(
     navController: NavHostController,
-    viewModel: UserFlowViewModel = koinViewModel()
+    viewModel: UserFlowViewModel
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val uiState by viewModel.uiState.collectAsState()

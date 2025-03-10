@@ -9,6 +9,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import com.davidspartan.androidflipcardgame.view.navigation.NavHost
+import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 class MainActivity : ComponentActivity() {

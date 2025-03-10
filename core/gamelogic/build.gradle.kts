@@ -1,12 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    id("io.realm.kotlin")
-    id("com.google.devtools.ksp") // KSP plugin
 }
 
 android {
-    namespace = "com.davidspartan.database"
+    namespace = "com.davidspartan.gamelogic"
     compileSdk = 35
 
     defaultConfig {
@@ -35,13 +33,11 @@ android {
 }
 
 dependencies {
-    implementation("io.realm.kotlin:library-base:2.0.0")
-    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(project(":core:model"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
