@@ -46,133 +46,153 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.stringToColor
+import com.davidspartan.androidflipcardgame.view.components.AutoResizedTextWithBackground
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
+import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
+import com.davidspartan.database.realm.Theme
+import com.davidspartan.database.realm.User
 
 @Composable
 fun ThemeScreen(
     navController: NavHostController,
     viewModel: UserFlowViewModel
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val uiState by viewModel.uiState.collectAsState()
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    var themeSelectedForPurchase by remember { mutableStateOf(AllThemes[0]) }
-    val context = LocalContext.current
 
     when(uiState){
         is UserUiState.LoggedIn -> {
             val user = (uiState as UserUiState.LoggedIn).selectedUser
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    ThemedText(
-                        text = "Points: ${user.score}",
-                        theme = user.selectedTheme!!
-                    )
-
-                    Spacer(modifier = Modifier.size(50.dp))
-
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3), // 3 cards per row
-                        modifier = Modifier,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        items(AllThemes) { theme -> // Iterate over each card directly
-
-                            Box {
-
-                                ThemeSample(
-                                    theme,
-                                    theme.name == user.selectedTheme!!.name
-                                ) {
-                                    viewModel.selectTheme(user, theme)
-                                }
-                                if (!viewModel.userHasThemeWithName(user, theme.name)) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .size(screenWidth * 0.25f)
-                                            .background(
-                                                color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
-                                                shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
-                                            )
-                                            .clickable {
-                                                themeSelectedForPurchase = theme
-                                                showDeleteDialog = true
-
-                                            },
-                                    )
-                                }
-                            }
-                        }
-
-                    }
-
-                    Spacer(modifier = Modifier.size(50.dp))
-
-                    OptionButton(
-                        text = "Go To Menu",
-                        theme = user.selectedTheme!!
-                    ) {
-                        navController.navigateUp()
-                    }
-                }
-
-                if (showDeleteDialog) {
-                    DialogPopup(
-                        onDismissRequest = { showDeleteDialog = false },
-                        onConfirmation = {
-
-                            if (viewModel.purchaseTheme(user, themeSelectedForPurchase)) {
-                                viewModel.selectTheme(user, themeSelectedForPurchase)
-                                showDeleteDialog = false
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-
-                        },
-                        dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
-                        dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
-                        icon = Icons.Default.ShoppingCart
-                    )
-                }
-
-            }
+            ThemeScreenContent(user, navController, viewModel)
         }
         UserUiState.LoggedOut -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(WindowInsets.statusBars.asPaddingValues()),
-                contentAlignment = Alignment.Center
-            ){
-                Text(
-                    text = "No user is logged in.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            UserNotLoggedInScreen()
         }
     }
 }
 
 @Composable
-fun ThemeSample(theme: com.davidspartan.database.realm.Theme, currentlySelected: Boolean, function: () -> Unit) {
+fun ThemeScreenContent(
+    user: User,
+    navController: NavHostController,
+    viewModel: UserFlowViewModel
+) {
+    var themeSelectedForPurchase by remember { mutableStateOf(AllThemes[0]) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ThemedText(
+                text = "Points: ${user.score}",
+                theme = user.selectedTheme!!
+            )
+
+            Spacer(modifier = Modifier.size(50.dp))
+
+            ThemeSampleGrid(
+                user,
+                viewModel,
+                selectTheme = { theme ->
+                    themeSelectedForPurchase = theme
+                    showDeleteDialog = true
+                }
+            )
+
+            Spacer(modifier = Modifier.size(50.dp))
+
+            OptionButton(
+                text = "Go To Menu",
+                theme = user.selectedTheme!!
+            ) {
+                navController.navigateUp()
+            }
+        }
+
+        if (showDeleteDialog) {
+            DialogPopup(
+                onDismissRequest = { showDeleteDialog = false },
+                onConfirmation = {
+
+                    if (viewModel.purchaseTheme(user, themeSelectedForPurchase)) {
+                        viewModel.selectTheme(user, themeSelectedForPurchase)
+                        showDeleteDialog = false
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                },
+                dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
+                dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
+                icon = Icons.Default.ShoppingCart
+            )
+        }
+
+    }
+}
+
+@Composable
+fun ThemeSampleGrid(
+    user: User,
+    viewModel: UserFlowViewModel,
+    selectTheme: (Theme) -> Unit // Accept Theme as a parameter
+) {
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3), // 3 cards per row
+        modifier = Modifier,
+        verticalArrangement = Arrangement.Center
+    ) {
+        items(AllThemes) { theme -> // Iterate over each card directly
+
+            Box {
+
+                ThemeSample(
+                    theme,
+                    theme.name == user.selectedTheme!!.name
+                ) {
+                    viewModel.selectTheme(user, theme)
+                }
+                if (!viewModel.userHasThemeWithName(user, theme.name)) {
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .size(screenWidth * 0.25f)
+                            .background(
+                                color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
+                                shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
+                            )
+                            .clickable {
+                                selectTheme(theme)
+                            },
+                    )
+                }
+            }
+        }
+    }
+}
+@Composable
+fun ThemeSample(
+    theme: Theme,
+    currentlySelected: Boolean,
+    function: () -> Unit
+) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
@@ -233,43 +253,3 @@ fun ThemeSample(theme: com.davidspartan.database.realm.Theme, currentlySelected:
     }
 }
 
-@Composable
-fun AutoResizedTextWithBackground(
-    text: String,
-    style: TextStyle,
-    modifier: Modifier,
-    color: Color = style.color
-) {
-    var resizedTextStyle by remember {
-        mutableStateOf(style)
-    }
-    var shouldDraw by remember {
-        mutableStateOf(false)
-    }
-    val defaultFontSize = MaterialTheme.typography.bodySmall.fontSize
-    Text(
-        text = text,
-        color = color,
-        modifier = modifier.drawWithContent {
-            if (shouldDraw){
-                drawContent()
-            }
-        },
-        softWrap = false,
-        style = resizedTextStyle,
-        onTextLayout = { result ->
-            if (result.didOverflowWidth) {
-                if(style.fontSize.isUnspecified){
-                    resizedTextStyle = resizedTextStyle.copy(
-                        fontSize = defaultFontSize
-                    )
-                }
-                resizedTextStyle = resizedTextStyle.copy(
-                    fontSize = resizedTextStyle.fontSize * 0.95
-                )
-            }else{
-                shouldDraw = true
-            }
-        }
-    )
-}
