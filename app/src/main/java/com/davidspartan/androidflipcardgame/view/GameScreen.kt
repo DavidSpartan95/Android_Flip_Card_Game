@@ -28,10 +28,14 @@ import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.FlipCard
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
+import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
 import com.davidspartan.androidflipcardgame.viewmodel.GameUiState
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
+import com.davidspartan.database.realm.User
+import com.davidspartan.model.Card
+import com.davidspartan.model.GameState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -55,98 +59,125 @@ fun GameScreen(
     when(uiState){
 
         is UserUiState.LoggedIn -> {
+
             val selectedUser = (uiState as UserUiState.LoggedIn).selectedUser
 
             when(gameUiState){
-                is GameUiState.GameOver -> {
-                    val gameState = (gameUiState as GameUiState.GameOver).gameState
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(stringToColor(selectedUser.selectedTheme!!.primaryHexColor))
-                        ,
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        ThemedText(
-                            text = "Result\nScore: ${gameState.score}\nTotal flips: ${gameState.totalFlips}",
-                            theme = selectedUser.selectedTheme!!
-                        )
-                        Spacer(modifier = Modifier.size(50.dp))
-                        OptionButton(
-                            text = "New Game",
-                            theme = selectedUser.selectedTheme!!
-                        ) {
-                            gameViewModel.resetGame()
-                        }
-                        Spacer(modifier = Modifier.size(8.dp))
-                        OptionButton(
-                            text = "Go To Menu",
-                            theme = selectedUser.selectedTheme!!
-                        ) {
-                            navController.navigateUp()
-                        }
-                    }
-                }
+
                 is GameUiState.Playing -> {
                     val gameState = (gameUiState as GameUiState.Playing).gameState
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(stringToColor(selectedUser.selectedTheme!!.primaryHexColor)),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        ThemedText(
-                            text = "${selectedUser.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
-                            theme = selectedUser.selectedTheme!!
-                        )
-                        Spacer(modifier = Modifier.size(50.dp))
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(3), // 3 cards per row
-                            modifier = Modifier
-                                .background(stringToColor(selectedUser.selectedTheme!!.primaryHexColor)),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            items(cards) { card -> // Iterate over each card directly
 
-                                FlipCard(
-                                    theme = selectedUser.selectedTheme!!,
-                                    card = card
-                                ){
-                                    gameViewModel.flipCard(
-                                        card = card
-                                    )
-                                }
-                            }
-                        }
+                    GameIsPlayingContent(
+                        user = selectedUser,
+                        gameViewModel = gameViewModel,
+                        gameState = gameState,
+                        navController = navController,
+                        cards = cards
+                    )
+                }
 
-                        Spacer(modifier = Modifier.size(50.dp))
+                is GameUiState.GameOver -> {
+                    val gameState = (gameUiState as GameUiState.GameOver).gameState
 
-                        OptionButton(
-                            text = "Go To Menu",
-                            theme = selectedUser.selectedTheme!!
-                        ) {
-                            navController.navigateUp()
-                        }
-                    }
+                    GameIsOverContent(
+                        user = selectedUser,
+                        gameState = gameState,
+                        navController = navController,
+                        gameViewModel = gameViewModel
+                    )
+
                 }
             }
-
         }
         UserUiState.LoggedOut -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(WindowInsets.statusBars.asPaddingValues()),
-                contentAlignment = Alignment.Center
-            ){
-                Text(
-                    text = "No user is logged in.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+            UserNotLoggedInScreen()
+        }
+    }
+}
+
+@Composable
+fun GameIsPlayingContent(
+    user: User,
+    gameViewModel: GameViewModel,
+    gameState: GameState,
+    navController: NavHostController,
+    cards: List<Card>
+) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(stringToColor(user.selectedTheme!!.primaryHexColor)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        ThemedText(
+            text = "${user.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
+            theme = user.selectedTheme!!
+        )
+        Spacer(modifier = Modifier.size(50.dp))
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3), // 3 cards per row
+            modifier = Modifier
+                .background(stringToColor(user.selectedTheme!!.primaryHexColor)),
+            verticalArrangement = Arrangement.Center
+        ) {
+            items(cards) { card -> // Iterate over each card directly
+
+                FlipCard(
+                    theme = user.selectedTheme!!,
+                    card = card
+                ){
+                    gameViewModel.flipCard(
+                        card = card
+                    )
+                }
             }
+        }
+
+        Spacer(modifier = Modifier.size(50.dp))
+
+        OptionButton(
+            text = "Go To Menu",
+            theme = user.selectedTheme!!
+        ) {
+            navController.navigateUp()
+        }
+    }
+}
+
+@Composable
+fun GameIsOverContent(
+    user: User,
+    gameState: GameState,
+    navController: NavHostController,
+    gameViewModel: GameViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+        ,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        ThemedText(
+            text = "Result\nScore: ${gameState.score}\nTotal flips: ${gameState.totalFlips}",
+            theme = user.selectedTheme!!
+        )
+        Spacer(modifier = Modifier.size(50.dp))
+        OptionButton(
+            text = "New Game",
+            theme = user.selectedTheme!!
+        ) {
+            gameViewModel.resetGame()
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        OptionButton(
+            text = "Go To Menu",
+            theme = user.selectedTheme!!
+        ) {
+            navController.navigateUp()
         }
     }
 }

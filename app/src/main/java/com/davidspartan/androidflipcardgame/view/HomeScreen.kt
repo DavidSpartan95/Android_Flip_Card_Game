@@ -26,10 +26,12 @@ import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
+import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
 import com.davidspartan.androidflipcardgame.view.navigation.Appearance
 import com.davidspartan.androidflipcardgame.view.navigation.Game
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
+import com.davidspartan.database.realm.User
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -46,82 +48,91 @@ fun HomeScreen(
 
             val user = (uiState as UserUiState.LoggedIn).selectedUser
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
-                    .padding(WindowInsets.statusBars.asPaddingValues()),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    //Button(onClick = { viewModel.getUserById(user.id) }) { }
-                    ThemedText(
-                        text = "User: ${user.name}",
-                        theme = user.selectedTheme!!
-                    )
+            HomeMenuContent(user, navController)
 
-                    Spacer(modifier = Modifier.size(5.dp))
-
-                    ThemedText(
-                        text = "Points: ${user.score}",
-                        theme = user.selectedTheme!!
-                    )
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Display content when a user is logged in
-                    OptionButton(
-                        text = "Play",
-                        theme = user.selectedTheme!!
-                    ) {
-                        navController.navigate(Game)
-                    }
-
-                    Spacer(modifier = Modifier.size(5.dp))
-
-                    OptionButton(
-                        text = "Themes",
-                        theme = user.selectedTheme!!
-                    ) {
-                        navController.navigate(Appearance)
-                    }
-
-                    Spacer(modifier = Modifier.size(5.dp))
-
-                    OptionButton(
-                        text = "Go Back To Login",
-                        theme = user.selectedTheme!!
-                    ) {
-                        navController.navigateUp()
-
-                    }
-                }
-            }
         }
 
         UserUiState.LoggedOut -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(WindowInsets.statusBars.asPaddingValues()),
-                contentAlignment = Alignment.Center
-            ){
-                Text(
-                    text = "No user is logged in.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+
+            UserNotLoggedInScreen()
         }
     }
 }
 
+@Composable
+fun HomeMenuContent(user: User, navController: NavHostController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+            .padding(WindowInsets.statusBars.asPaddingValues()),
+        contentAlignment = Alignment.TopCenter
+    ) {
+
+        UserMenuInfo(user)
+
+        MenuButtons(user, navController)
+
+    }
+}
+
+@Composable
+fun UserMenuInfo(user: User) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        ThemedText(
+            text = "User: ${user.name}",
+            theme = user.selectedTheme!!
+        )
+
+        Spacer(modifier = Modifier.size(5.dp))
+
+        ThemedText(
+            text = "Points: ${user.score}",
+            theme = user.selectedTheme!!
+        )
+    }
+}
+
+@Composable
+fun MenuButtons(user: User, navController: NavHostController) {
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Display content when a user is logged in
+        OptionButton(
+            text = "Play",
+            theme = user.selectedTheme!!
+        ) {
+            navController.navigate(Game)
+        }
+
+        Spacer(modifier = Modifier.size(5.dp))
+
+        OptionButton(
+            text = "Themes",
+            theme = user.selectedTheme!!
+        ) {
+            navController.navigate(Appearance)
+        }
+
+        Spacer(modifier = Modifier.size(5.dp))
+
+        OptionButton(
+            text = "Go Back To Login",
+            theme = user.selectedTheme!!
+        ) {
+            navController.navigateUp()
+
+        }
+    }
+
+}
