@@ -52,15 +52,6 @@ fun GameScreen(
     val gameUiState by gameViewModel.uiState.collectAsState()
     val cards by gameViewModel.cards.collectAsState()
 
-    //TODO FIX INFINITE POINT Glitch, GameViewModel should have acces to UserRepository
-    LaunchedEffect(gameUiState) {
-        if (gameUiState is GameUiState.GameOver) {
-            val selectedUser = (uiState as UserUiState.LoggedIn).selectedUser
-            val gameState = (gameUiState as GameUiState.GameOver).gameState
-            viewModel.addScore(selectedUser.id, gameState.score)
-        }
-    }
-
     when (uiState) {
 
         is UserUiState.LoggedIn -> {

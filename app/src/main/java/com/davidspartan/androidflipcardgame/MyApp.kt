@@ -41,6 +41,9 @@ class MyApp : Application() {
 val appModule = module {
     single { UserRepository() } // Keep UserRepository as a singleton if needed
     factory { GameRepository() } // Creates a new instance each time it's injected
-    factory { GameViewModel(get()) } // Creates a new instance of GameViewModel when injected
+    factory { GameViewModel(
+        repository = get(),
+        userRepository = get()
+    ) } // Creates a new instance of GameViewModel when injected
     single { UserFlowViewModel(get()) } // Keeping this as a singleton if needed
 }
