@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -93,6 +94,7 @@ fun FlipCard(
                 Image(
                     painter = painterResource(id = R.drawable.android_card_front),
                     contentDescription = "Card Back",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize(),
                     colorFilter = ColorFilter.tint(stringToColor(card.hexColor))
                 )
