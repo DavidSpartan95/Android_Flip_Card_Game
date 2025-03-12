@@ -34,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,7 +86,7 @@ fun ThemeScreenContent(
     viewModel: UserFlowViewModel
 ) {
     var themeSelectedForPurchase by remember { mutableStateOf(AllThemes[0]) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by rememberSaveable  { mutableStateOf(false) }
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
 

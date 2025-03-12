@@ -32,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,8 +59,8 @@ fun SelectUserScreen(
     viewModel: UserFlowViewModel
 ) {
     val users by viewModel.users.collectAsState(initial = emptyList()) // Provide an initial value
-    val showPopup = remember { mutableStateOf(false) } // Track if popup is visible
-    val showDeleteDialog = remember { mutableStateOf(false) }
+    val showPopup = rememberSaveable { mutableStateOf(false) } // Track if popup is visible
+    val showDeleteDialog = rememberSaveable { mutableStateOf(false) }
     val showInfoDialog = remember { mutableStateOf(false) }
     var userSelected by remember { mutableStateOf<com.davidspartan.database.realm.User?>(null) }
     val context = LocalContext.current
