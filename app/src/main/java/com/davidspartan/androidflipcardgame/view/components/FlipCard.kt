@@ -37,6 +37,8 @@ fun FlipCard(
     // Bind the `isFlipped` state to `card.isFlipped`
     val isFlipped by rememberUpdatedState(card.isFlipped)
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val cardSize = if (screenWidth < screenHeight) screenWidth * 0.25f else screenHeight * 0.25f
     val colorTag = "card_color_${card.hexColor}" // Convert color to a unique tag
 
     // Animate the rotation angle
@@ -49,7 +51,7 @@ fun FlipCard(
     Box(
         modifier = Modifier
             .padding(16.dp)
-            .size(screenWidth * 0.25f) // Set size to 25% of screen width
+            .size(cardSize) // Set size to 25% of screen width
             .clickable {
                 if (!isFlipped) flipAction.invoke()
             }
