@@ -91,6 +91,7 @@ class UserRepository() {
             val queryUser = query<User>("id == $0", user.id).find().first()
             queryUser.selectedTheme = theme
         }
+        selectUser(user.id)
     }
 
     fun userHasThemeWithName(user: User?, themeName: String): Boolean {

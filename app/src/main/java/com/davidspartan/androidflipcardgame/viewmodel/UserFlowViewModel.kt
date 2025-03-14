@@ -3,6 +3,7 @@ package com.davidspartan.androidflipcardgame.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidspartan.database.data.UserRepository
+import com.davidspartan.database.realm.Theme
 import com.davidspartan.database.realm.User
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,7 @@ import org.mongodb.kbson.ObjectId
 class UserFlowViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     val users = userRepository.users
-    private val selectedUser = userRepository.selectedUser
+    val selectedUser = userRepository.selectedUser
 
     init {
         println("ViewModel initialized")
@@ -38,7 +39,9 @@ class UserFlowViewModel(private val userRepository: UserRepository) : ViewModel(
     fun selectUser(user: User) {
         userRepository.selectUser(user.id)
     }
-
+    fun getSelectedUser(): Theme? {
+        return selectedUser.value?.selectedTheme
+    }
     fun addUser(name: String) {
         viewModelScope.launch { userRepository.addUser(name) }
     }
