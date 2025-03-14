@@ -1,9 +1,11 @@
 package com.davidspartan.androidflipcardgame.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -20,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -42,7 +45,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
 
 
-    when(uiState){
+    when (uiState) {
 
         is UserUiState.LoggedIn -> {
 
@@ -61,26 +64,51 @@ fun HomeScreen(
 
 @Composable
 fun HomeMenuContent(user: User, navController: NavHostController) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(stringToColor(user.selectedTheme!!.primaryHexColor))
-            .padding(WindowInsets.statusBars.asPaddingValues()),
-        contentAlignment = Alignment.TopCenter
-    ) {
+    val configuration = LocalConfiguration.current
 
-        UserMenuInfo(user)
+    when (configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> { //Landscape
 
-        MenuButtons(user, navController)
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
+                horizontalArrangement = Arrangement.SpaceEvenly
+
+            ) {
+                UserMenuInfo(user)
+
+                MenuButtons(user, navController)
+
+            }
+        }
+
+        else -> { //Portrait
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
+               horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                UserMenuInfo(user)
+                Spacer(modifier = Modifier.weight(0.5f))
+                MenuButtons(user, navController)
+                Spacer(modifier = Modifier.weight(1f))
+
+            }
+        }
 
     }
+
 }
 
 @Composable
 fun UserMenuInfo(user: User) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -103,7 +131,7 @@ fun UserMenuInfo(user: User) {
 fun MenuButtons(user: User, navController: NavHostController) {
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

@@ -1,5 +1,6 @@
 package com.davidspartan.androidflipcardgame.view
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,11 +67,12 @@ fun ThemeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    when(uiState){
+    when (uiState) {
         is UserUiState.LoggedIn -> {
             val user = (uiState as UserUiState.LoggedIn).selectedUser
             ThemeScreenContent(user, navController, viewModel)
         }
+
         UserUiState.LoggedOut -> {
             UserNotLoggedInScreen()
         }
@@ -81,67 +86,111 @@ fun ThemeScreenContent(
     viewModel: UserFlowViewModel
 ) {
     var themeSelectedForPurchase by remember { mutableStateOf(AllThemes[0]) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by rememberSaveable  { mutableStateOf(false) }
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(stringToColor(user.selectedTheme!!.primaryHexColor))
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ThemedText(
-                text = "Points: ${user.score}",
-                theme = user.selectedTheme!!
-            )
+    when (configuration.orientation) {
 
-            Spacer(modifier = Modifier.size(50.dp))
-
-            ThemeSampleGrid(
-                user,
-                viewModel,
-                selectTheme = { theme ->
-                    themeSelectedForPurchase = theme
-                    showDeleteDialog = true
-                }
-            )
-
-            Spacer(modifier = Modifier.size(50.dp))
-
-            OptionButton(
-                text = "Go To Menu",
-                theme = user.selectedTheme!!
+        Configuration.ORIENTATION_LANDSCAPE -> { //Landscape
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                navController.navigateUp()
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    //verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Spacer(modifier = Modifier.size(5.dp))
+                    ThemedText(
+                        text = "Points: ${user.score}",
+                        theme = user.selectedTheme!!
+                    )
+                    Spacer(modifier = Modifier.size(50.dp))
+                    OptionButton(
+                        text = "Go To Menu",
+                        theme = user.selectedTheme!!
+                    ) {
+                        navController.navigateUp()
+                    }
+                    Spacer(modifier = Modifier.size(5.dp))
+
+                }
+                ThemeSampleGrid(
+                    user,
+                    viewModel,
+                    selectTheme = { theme ->
+                        themeSelectedForPurchase = theme
+                        showDeleteDialog = true
+                    }
+                )
             }
         }
 
-        if (showDeleteDialog) {
-            DialogPopup(
-                onDismissRequest = { showDeleteDialog = false },
-                onConfirmation = {
+        else -> { //Portrait
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ThemedText(
+                        text = "Points: ${user.score}",
+                        theme = user.selectedTheme!!
+                    )
 
-                    if (viewModel.purchaseTheme(user, themeSelectedForPurchase)) {
-                        viewModel.selectTheme(user, themeSelectedForPurchase)
-                        showDeleteDialog = false
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    Spacer(modifier = Modifier.size(50.dp))
+
+                    ThemeSampleGrid(
+                        user,
+                        viewModel,
+                        selectTheme = { theme ->
+                            themeSelectedForPurchase = theme
+                            showDeleteDialog = true
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.size(50.dp))
+
+                    OptionButton(
+                        text = "Go To Menu",
+                        theme = user.selectedTheme!!
+                    ) {
+                        navController.navigateUp()
                     }
-
-                },
-                dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
-                dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
-                icon = Icons.Default.ShoppingCart
-            )
+                }
+            }
         }
+    }
+    if (showDeleteDialog) {
+        DialogPopup(
+            onDismissRequest = { showDeleteDialog = false },
+            onConfirmation = {
 
+                if (viewModel.purchaseTheme(user, themeSelectedForPurchase)) {
+                    viewModel.selectTheme(user, themeSelectedForPurchase)
+                    showDeleteDialog = false
+                } else {
+                    Toast.makeText(
+                        context,
+                        "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            },
+            dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
+            dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
+            icon = Icons.Default.ShoppingCart
+        )
     }
 }
 
@@ -152,7 +201,10 @@ fun ThemeSampleGrid(
     selectTheme: (Theme) -> Unit // Accept Theme as a parameter
 ) {
 
+
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val cardSize = if (screenWidth < screenHeight) screenWidth * 0.25f else screenHeight * 0.25f
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3), // 3 cards per row
@@ -173,7 +225,7 @@ fun ThemeSampleGrid(
                     Box(
                         modifier = Modifier
                             .padding(16.dp)
-                            .size(screenWidth * 0.25f)
+                            .size(cardSize)
                             .background(
                                 color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
                                 shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
@@ -187,6 +239,7 @@ fun ThemeSampleGrid(
         }
     }
 }
+
 @Composable
 fun ThemeSample(
     theme: Theme,
@@ -195,11 +248,13 @@ fun ThemeSample(
 ) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val cardSize = if (screenWidth < screenHeight) screenWidth * 0.25f else screenHeight * 0.25f
 
     Box(
         modifier = Modifier
             .padding(16.dp)
-            .size(screenWidth * 0.25f) // Set size to 25% of screen width
+            .size(cardSize) // Set size to 25% of screen width
             .clickable {
                 function.invoke()
             },
