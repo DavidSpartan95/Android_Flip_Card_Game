@@ -29,5 +29,20 @@ val AllThemes = listOf(
         secondaryHexColor = "#815854"
         textHexColor = "#F9EBDE"
         price = 30
+    },
+    Theme().apply {
+        name = "Thunder"
+        primaryHexColor = "#101820"
+        secondaryHexColor = "#FEE715"
+        textHexColor = "#101820"
+        price = 30
+    },
+    Theme().apply {
+        name = "Lava"
+        primaryHexColor = "#A4193D"
+        secondaryHexColor = "#FFDFB9"
+        textHexColor = "#A4193D"
+        price = 30
     }
+
 )

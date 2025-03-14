@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +52,7 @@ import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
-import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun SelectUserScreen(
@@ -65,11 +66,12 @@ fun SelectUserScreen(
     var userSelected by remember { mutableStateOf<com.davidspartan.database.realm.User?>(null) }
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val theme = viewModel.getSelectedUser()?: AllThemes[0]
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(stringToColor(AllThemes[0].primaryHexColor)),
+            .background(stringToColor(theme.primaryHexColor)),
         contentAlignment = Alignment.TopCenter
     ) {
 
@@ -83,7 +85,7 @@ fun SelectUserScreen(
         ) {
             OptionButton(
                 text = "Create New User",
-                theme = AllThemes[0]
+                theme = theme
             ) {
                 if (users.size>=8) {
                     Toast.makeText(context, "Max 8 users allowed.", Toast.LENGTH_SHORT).show()
@@ -101,7 +103,7 @@ fun SelectUserScreen(
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = "Info",
-                        tint = stringToColor(AllThemes[0].primaryHexColor),
+                        tint = stringToColor(theme.primaryHexColor),
                         modifier = Modifier
                             .padding(8.dp)
                             .clickable {
@@ -113,7 +115,7 @@ fun SelectUserScreen(
                         modifier = Modifier
                             .padding(8.dp)
                             .background(
-                                color = stringToColor(AllThemes[0].secondaryHexColor),
+                                color = stringToColor(theme.secondaryHexColor),
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .padding(8.dp)
@@ -128,7 +130,7 @@ fun SelectUserScreen(
                             text = user.name,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = stringToColor(AllThemes[0].textHexColor)
+                            color = stringToColor(theme.textHexColor)
                         )
                     }
                     Icon(
