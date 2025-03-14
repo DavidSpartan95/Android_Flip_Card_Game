@@ -23,6 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -100,6 +103,7 @@ fun GameIsPlayingContent(
     navController: NavHostController,
     cards: List<Card>
 ) {
+    var isNavigating by rememberSaveable { mutableStateOf(false) }
     val configuration = LocalConfiguration.current
     when (configuration.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> { //Landscape
@@ -125,7 +129,10 @@ fun GameIsPlayingContent(
                         text = "Go To Menu",
                         theme = user.selectedTheme!!
                     ) {
-                        navController.navigateUp()
+                        if(!isNavigating){
+                            isNavigating = true
+                            navController.navigateUp()
+                        }
                     }
                 }
 
@@ -189,7 +196,10 @@ fun GameIsPlayingContent(
                     text = "Go To Menu",
                     theme = user.selectedTheme!!
                 ) {
-                    navController.navigateUp()
+                    if(!isNavigating){
+                        isNavigating = true
+                        navController.navigateUp()
+                    }
                 }
             }
         }
@@ -204,6 +214,7 @@ fun GameIsOverContent(
     navController: NavHostController,
     gameViewModel: GameViewModel
 ) {
+    var isNavigating by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -227,7 +238,10 @@ fun GameIsOverContent(
             text = "Go To Menu",
             theme = user.selectedTheme!!
         ) {
-            navController.navigateUp()
+            if(!isNavigating){
+                isNavigating = true
+                navController.navigateUp()
+            }
         }
     }
 }

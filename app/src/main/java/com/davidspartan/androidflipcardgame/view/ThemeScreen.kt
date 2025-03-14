@@ -89,6 +89,7 @@ fun ThemeScreenContent(
     var showDeleteDialog by rememberSaveable  { mutableStateOf(false) }
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
+    var isNavigating by rememberSaveable { mutableStateOf(false) }
 
     when (configuration.orientation) {
 
@@ -116,7 +117,10 @@ fun ThemeScreenContent(
                         text = "Go To Menu",
                         theme = user.selectedTheme!!
                     ) {
-                        navController.navigateUp()
+                        if(!isNavigating){
+                            isNavigating = true
+                            navController.navigateUp()
+                        }
                     }
                     Spacer(modifier = Modifier.size(5.dp))
 
@@ -164,7 +168,10 @@ fun ThemeScreenContent(
                         text = "Go To Menu",
                         theme = user.selectedTheme!!
                     ) {
-                        navController.navigateUp()
+                        if(!isNavigating){
+                            isNavigating = true
+                            navController.navigateUp()
+                        }
                     }
                 }
             }
