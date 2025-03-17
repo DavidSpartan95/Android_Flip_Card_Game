@@ -56,7 +56,7 @@ dependencies {
 
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    implementation("io.realm.kotlin:library-base:2.0.0")
+    implementation(libs.library.base)
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation("io.coil-kt:coil-compose:2.5.0")

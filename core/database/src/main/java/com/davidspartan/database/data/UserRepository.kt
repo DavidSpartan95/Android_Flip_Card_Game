@@ -3,6 +3,7 @@ package com.davidspartan.database.data
 import com.davidspartan.database.realm.MyRealm
 import com.davidspartan.database.realm.User
 import com.davidspartan.database.realm.Theme
+import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,9 +17,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import org.mongodb.kbson.ObjectId
 
-class UserRepository() {
+class UserRepository(val realm: Realm) {
 
-    private val realm = MyRealm.realm
 
     private val usersFlow: Flow<List<User>> = realm
         .query<User>()
