@@ -5,7 +5,6 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest // `runTest` is preferred over `runBlockingTest` in newer versions of Kotlin
 import org.junit.After
 import org.junit.Before
