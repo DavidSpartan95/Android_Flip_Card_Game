@@ -1,6 +1,7 @@
 package com.davidspartan.database.data
 
-import com.davidspartan.database.realm.MyRealm
+import com.davidspartan.database.realm.AllThemes
+
 import com.davidspartan.database.realm.User
 import com.davidspartan.database.realm.Theme
 import io.realm.kotlin.Realm
@@ -40,18 +41,11 @@ class UserRepository(val realm: Realm) {
     }
     suspend fun addUser(name: String) {
         realm.write {
-            val defaultTheme = Theme().apply {
-                this.name = "Default"
-                primaryHexColor = "#7b9acc"
-                secondaryHexColor = "#FCF6F5"
-                textHexColor = "#7b9acc"
-                price = 0
-            }
 
             val newUser = User().apply {
                 this.name = name
-                this.themes.add(defaultTheme)
-                this.selectedTheme = defaultTheme
+                this.themes.add(AllThemes[0])
+                this.selectedTheme = AllThemes[0]
             }
 
             copyToRealm(newUser)

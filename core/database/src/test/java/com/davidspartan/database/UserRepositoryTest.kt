@@ -135,7 +135,7 @@ class UserRepositoryTest {
         users = realm.query<User>().find()
 
         //User should now have testTheme as selected theme and 90 points as score
-        assertEquals(testTheme.name, users[0].selectedTheme!!.name )
+        assertEquals(testTheme.name, users[0].selectedTheme.name )
         assertEquals(90, users[0].score)
 
     }
