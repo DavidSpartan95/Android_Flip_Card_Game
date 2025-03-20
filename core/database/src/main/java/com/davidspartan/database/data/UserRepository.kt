@@ -1,8 +1,10 @@
 package com.davidspartan.database.data
 
-import com.davidspartan.database.realm.MyRealm
+import com.davidspartan.database.realm.AllThemes
+
 import com.davidspartan.database.realm.User
 import com.davidspartan.database.realm.Theme
+import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,9 +18,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import org.mongodb.kbson.ObjectId
 
-class UserRepository() {
+class UserRepository(val realm: Realm) {
 
-    private val realm = MyRealm.realm
 
     private val usersFlow: Flow<List<User>> = realm
         .query<User>()
@@ -40,18 +41,11 @@ class UserRepository() {
     }
     suspend fun addUser(name: String) {
         realm.write {
-            val defaultTheme = Theme().apply {
-                this.name = "Default"
-                primaryHexColor = "#7b9acc"
-                secondaryHexColor = "#FCF6F5"
-                textHexColor = "#7b9acc"
-                price = 0
-            }
 
             val newUser = User().apply {
                 this.name = name
-                this.themes.add(defaultTheme)
-                this.selectedTheme = defaultTheme
+                this.themes.add(AllThemes[0])
+                this.selectedTheme = AllThemes[0]
             }
 
             copyToRealm(newUser)

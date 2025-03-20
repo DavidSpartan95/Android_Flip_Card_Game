@@ -97,7 +97,7 @@ fun ThemeScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -115,7 +115,7 @@ fun ThemeScreenContent(
                     Spacer(modifier = Modifier.size(50.dp))
                     OptionButton(
                         text = "Go To Menu",
-                        theme = user.selectedTheme!!
+                        theme = user.selectedTheme
                     ) {
                         if(!isNavigating){
                             isNavigating = true
@@ -141,14 +141,14 @@ fun ThemeScreenContent(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .background(stringToColor(user.selectedTheme.primaryHexColor))
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ThemedText(
                         text = "Points: ${user.score}",
-                        theme = user.selectedTheme!!
+                        theme = user.selectedTheme
                     )
 
                     Spacer(modifier = Modifier.size(50.dp))
@@ -166,7 +166,7 @@ fun ThemeScreenContent(
 
                     OptionButton(
                         text = "Go To Menu",
-                        theme = user.selectedTheme!!
+                        theme = user.selectedTheme
                     ) {
                         if(!isNavigating){
                             isNavigating = true
@@ -224,7 +224,7 @@ fun ThemeSampleGrid(
 
                 ThemeSample(
                     theme,
-                    theme.name == user.selectedTheme!!.name
+                    theme.name == user.selectedTheme.name
                 ) {
                     viewModel.selectTheme(user, theme)
                 }

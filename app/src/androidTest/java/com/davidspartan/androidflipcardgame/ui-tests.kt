@@ -1,22 +1,16 @@
-package com
+package com.davidspartan.androidflipcardgame
 
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.hasAnyChild
-import androidx.compose.ui.test.hasClickAction
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.compose.ui.unit.IntSize
-import com.davidspartan.androidflipcardgame.MainActivity
-import kotlinx.coroutines.delay
 import org.junit.Rule
 import org.junit.Test
 
@@ -26,7 +20,7 @@ class Test {
 
     @Test
     fun testFullUserFlow_createsUserAndPlaysGame(){
-        val username = "DavidSpartan95"
+        val username = generateRandomUsername()
 
         rule.onNodeWithText("Create New User").performClick()
 
@@ -35,6 +29,10 @@ class Test {
             .performTextInput(username)
 
         rule.onNodeWithText("Create User").performClick()
+
+        rule.waitUntil(timeoutMillis = 5000) {
+            rule.onAllNodesWithText(username).fetchSemanticsNodes().isNotEmpty()
+        }
 
         rule.onNodeWithText(username).assertExists()
 
@@ -81,6 +79,15 @@ class Test {
         }
         rule.onNodeWithText("Go To Menu").performClick()
 
+        rule.onNodeWithText("Themes").performClick()
+
+        rule.onNodeWithText("Forest").performClick()
+
+        //this is a popup
+        rule.onNodeWithText("Dismiss").performClick()
+
+        rule.onNodeWithText("Go To Menu").performClick()
+
     }
 
     private fun hasTestTagStartingWith(prefix: String): SemanticsMatcher {
@@ -90,5 +97,12 @@ class Test {
             val testTag = node.config.getOrNull(SemanticsProperties.TestTag)
             testTag?.startsWith(prefix) == true
         }
+    }
+
+    private fun generateRandomUsername(): String {
+        val chars = ('a'..'z') + ('0'..'9')
+        return (1..16)
+            .map { chars.random() }
+            .joinToString("")
     }
 }

@@ -39,7 +39,9 @@ class MyApp : Application() {
 }
 
 val appModule = module {
-    single { UserRepository() } // Keep UserRepository as a singleton if needed
+    single { UserRepository(
+        realm = MyRealm.realm
+    ) } // Keep UserRepository as a singleton if needed
     factory { GameRepository() } // Creates a new instance each time it's injected
     factory { GameViewModel(
         repository = get(),

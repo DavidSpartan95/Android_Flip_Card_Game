@@ -35,9 +35,9 @@ android {
 }
 
 dependencies {
-    implementation("io.realm.kotlin:library-base:2.0.0")
+    implementation(libs.library.base)
     implementation(libs.kotlinx.serialization.json)
-
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

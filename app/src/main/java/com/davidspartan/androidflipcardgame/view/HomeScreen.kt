@@ -3,20 +3,15 @@ package com.davidspartan.androidflipcardgame.view
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
@@ -35,7 +29,6 @@ import com.davidspartan.androidflipcardgame.view.navigation.Game
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
 import com.davidspartan.database.realm.User
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
@@ -72,7 +65,7 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                 horizontalArrangement = Arrangement.SpaceEvenly
 
@@ -88,7 +81,7 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -115,14 +108,14 @@ fun UserMenuInfo(user: User) {
 
         ThemedText(
             text = "User: ${user.name}",
-            theme = user.selectedTheme!!
+            theme = user.selectedTheme
         )
 
         Spacer(modifier = Modifier.size(5.dp))
 
         ThemedText(
             text = "Points: ${user.score}",
-            theme = user.selectedTheme!!
+            theme = user.selectedTheme
         )
     }
 }
@@ -138,7 +131,7 @@ fun MenuButtons(user: User, navController: NavHostController) {
         // Display content when a user is logged in
         OptionButton(
             text = "Play",
-            theme = user.selectedTheme!!
+            theme = user.selectedTheme
         ) {
             navController.navigate(Game)
         }
@@ -147,7 +140,7 @@ fun MenuButtons(user: User, navController: NavHostController) {
 
         OptionButton(
             text = "Themes",
-            theme = user.selectedTheme!!
+            theme = user.selectedTheme
         ) {
             navController.navigate(Appearance)
         }
@@ -156,7 +149,7 @@ fun MenuButtons(user: User, navController: NavHostController) {
 
         OptionButton(
             text = "Go Back To Login",
-            theme = user.selectedTheme!!
+            theme = user.selectedTheme
         ) {
             navController.navigateUp()
 

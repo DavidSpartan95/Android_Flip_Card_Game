@@ -3,7 +3,6 @@ package com.davidspartan.androidflipcardgame.view
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +16,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -110,7 +106,7 @@ fun GameIsPlayingContent(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme!!.primaryHexColor))
+                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -121,13 +117,13 @@ fun GameIsPlayingContent(
                 ) {
                     ThemedText(
                         text = "${user.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
-                        theme = user.selectedTheme!!
+                        theme = user.selectedTheme
                     )
                     Spacer(modifier = Modifier.size(50.dp))
 
                     OptionButton(
                         text = "Go To Menu",
-                        theme = user.selectedTheme!!
+                        theme = user.selectedTheme
                     ) {
                         if(!isNavigating){
                             isNavigating = true
@@ -139,13 +135,13 @@ fun GameIsPlayingContent(
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3), // 3 cards per row
                     modifier = Modifier
-                        .background(stringToColor(user.selectedTheme!!.primaryHexColor)),
+                        .background(stringToColor(user.selectedTheme.primaryHexColor)),
                     verticalArrangement = Arrangement.Center
                 ) {
                     items(cards) { card -> // Iterate over each card directly
 
                         FlipCard(
-                            theme = user.selectedTheme!!,
+                            theme = user.selectedTheme,
                             card = card
                         ) {
                             gameViewModel.flipCard(
@@ -162,25 +158,25 @@ fun GameIsPlayingContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme!!.primaryHexColor)),
+                    .background(stringToColor(user.selectedTheme.primaryHexColor)),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ThemedText(
                     text = "${user.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
-                    theme = user.selectedTheme!!
+                    theme = user.selectedTheme
                 )
                 Spacer(modifier = Modifier.size(50.dp))
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3), // 3 cards per row
                     modifier = Modifier
-                        .background(stringToColor(user.selectedTheme!!.primaryHexColor)),
+                        .background(stringToColor(user.selectedTheme.primaryHexColor)),
                     verticalArrangement = Arrangement.Center
                 ) {
                     items(cards) { card -> // Iterate over each card directly
 
                         FlipCard(
-                            theme = user.selectedTheme!!,
+                            theme = user.selectedTheme,
                             card = card
                         ) {
                             gameViewModel.flipCard(
@@ -194,7 +190,7 @@ fun GameIsPlayingContent(
 
                 OptionButton(
                     text = "Go To Menu",
-                    theme = user.selectedTheme!!
+                    theme = user.selectedTheme
                 ) {
                     if(!isNavigating){
                         isNavigating = true
@@ -218,25 +214,25 @@ fun GameIsOverContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(stringToColor(user.selectedTheme!!.primaryHexColor)),
+            .background(stringToColor(user.selectedTheme.primaryHexColor)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ThemedText(
             text = "Result\nScore: ${gameState.score}\nTotal flips: ${gameState.totalFlips}",
-            theme = user.selectedTheme!!
+            theme = user.selectedTheme
         )
         Spacer(modifier = Modifier.size(50.dp))
         OptionButton(
             text = "New Game",
-            theme = user.selectedTheme!!
+            theme = user.selectedTheme
         ) {
             gameViewModel.resetGame()
         }
         Spacer(modifier = Modifier.size(8.dp))
         OptionButton(
             text = "Go To Menu",
-            theme = user.selectedTheme!!
+            theme = user.selectedTheme
         ) {
             if(!isNavigating){
                 isNavigating = true
