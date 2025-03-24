@@ -1,16 +1,25 @@
-# App Installation Guide
+# Welcome to Android Flip Card Game Project 
+
+<a href="https://play.google.com/store/apps/details?id=com.davidspartan.androidflipcardgame"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="140"></a>
+
+## Technology 
+
+### Jetpack compose 
+
+### Realm
+
+### Dependency Injection with Koin   
+
+
+## App Installation Guide
 
 ## 📱 Download & Install on Android Phone
 
-To install the app on your Android device, follow these steps:
+This app can be downloaded from the google play store by following the link below or click on the google play logo above
 
-1. Click the link below to access the APK file:  
-   [Download APK](https://drive.google.com/file/d/1rCRErEFGD1tOoz52x8rYqmhb2ZngR6IB/view?usp=sharing)
-2. Download the APK file to your phone.
-3. Locate the downloaded file and tap to install it.  
-   *(You may need to enable "Install from Unknown Sources" in your phone's settings.)*
+<a href="https://play.google.com/store/apps/details?id=com.davidspartan.androidflipcardgame"> DOWNLOAD ANDROID FLIP CARD GAME </a>
 
-## 🖥️ Run the App on an Emulator
+## 🖥️ Download the project using Android Studio and Run the App on an Emulator
 
 If you prefer to run the app on an emulator:
 
