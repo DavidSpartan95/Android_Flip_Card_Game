@@ -118,8 +118,10 @@ fun SelectUserScreen(
                             )
                             .padding(8.dp)
                             .clickable {
-                                viewModel.selectUser(user)
-                                navController.navigate(Home)
+                                if (navController.currentDestination?.route?.contains("NewUser") == true){
+                                    viewModel.selectUser(user)
+                                    navController.navigate(Home)
+                                }
                             }
                             .width(screenWidth * 0.45f)
                             .testTag(user.name)
