@@ -39,16 +39,25 @@ class UserRepository(val realm: Realm) {
         selectedUser.value = realm.query<User>("id == $0", userId).first().find()
         println("Selected user: ${selectedUser.value?.name}")
     }
-    suspend fun addUser(name: String) {
-        realm.write {
-
-            val newUser = User().apply {
-                this.name = name
-                this.themes.add(AllThemes[0])
-                this.selectedTheme = AllThemes[0]
+    suspend fun addUser(name: String): Pair<Boolean, String> {
+        if (name.length > 16) {
+            return Pair(false, "Username must be 16 characters or less")
+        }
+        if (users.value.any { it.name == name }) {
+            return Pair(false, "Username already exists")
+        }
+        return try {
+            realm.write {
+                val newUser = User().apply {
+                    this.name = name
+                    this.themes.add(AllThemes[0])
+                    this.selectedTheme = AllThemes[0]
+                }
+                copyToRealm(newUser)
             }
-
-            copyToRealm(newUser)
+            Pair(true, "User added successfully")
+        } catch (e: Exception) {
+            Pair(false, "Error adding user: ${e.message}")
         }
     }
 

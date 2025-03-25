@@ -42,9 +42,14 @@ class UserFlowViewModel(private val userRepository: UserRepository) : ViewModel(
     fun getSelectedUser(): Theme? {
         return selectedUser.value?.selectedTheme
     }
-    fun addUser(name: String) {
-        viewModelScope.launch { userRepository.addUser(name) }
+    fun addUser(name: String, onResult: (Pair<Boolean, String>) -> Unit) {
+        viewModelScope.launch {
+            val result = runCatching { userRepository.addUser(name) }
+                .getOrElse { false to "Error: ${it.message}" }
+            onResult(result)
+        }
     }
+
 
     fun deleteUser(user: User) {
         viewModelScope.launch { userRepository.deleteUser(user) }
