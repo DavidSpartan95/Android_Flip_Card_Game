@@ -18,9 +18,10 @@ class GameRepository {
     private val _flippedCards = MutableStateFlow<List<Card>>(emptyList())
 
     fun flipCard(card: Card) {
-        _gameState.value = _gameState.value.copy(totalFlips = _gameState.value.totalFlips + 1)
 
-        if (_flippedCards.value.size >= 2) return // Prevent flipping more than 2 cards
+        if (_flippedCards.value.size + 1 >= 3) return // Prevent flipping more than 2 cards
+
+        _gameState.value = _gameState.value.copy(totalFlips = _gameState.value.totalFlips + 1)
 
         _cards.value = _cards.value.map {
             if (it.id == card.id) it.copy(isFlipped = !it.isFlipped) else it
@@ -31,7 +32,7 @@ class GameRepository {
         if (_flippedCards.value.size == 2) {
 
             CoroutineScope(Dispatchers.Main).launch {
-                delay(700)
+                delay(500)
                 checkCards()
             }
         }
