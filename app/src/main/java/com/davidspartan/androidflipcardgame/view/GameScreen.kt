@@ -86,7 +86,9 @@ fun GameScreen(
         }
 
         UserUiState.LoggedOut -> {
-            UserNotLoggedInScreen()
+            UserNotLoggedInScreen(
+                navController = navController
+            )
         }
     }
 }
