@@ -50,7 +50,9 @@ fun HomeScreen(
 
         UserUiState.LoggedOut -> {
 
-            UserNotLoggedInScreen()
+            UserNotLoggedInScreen(
+                navController = navController
+            )
         }
     }
 }

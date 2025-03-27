@@ -42,9 +42,14 @@ class UserFlowViewModel(private val userRepository: UserRepository) : ViewModel(
     fun getSelectedUser(): Theme? {
         return selectedUser.value?.selectedTheme
     }
-    fun addUser(name: String) {
-        viewModelScope.launch { userRepository.addUser(name) }
+    fun addUser(name: String, onResult: (Pair<Boolean, String>) -> Unit) {
+        viewModelScope.launch {
+            val result = runCatching { userRepository.addUser(name) }
+                .getOrElse { false to "Error: ${it.message}" }
+            onResult(result)
+        }
     }
+
 
     fun deleteUser(user: User) {
         viewModelScope.launch { userRepository.deleteUser(user) }
@@ -54,9 +59,11 @@ class UserFlowViewModel(private val userRepository: UserRepository) : ViewModel(
         viewModelScope.launch { userRepository.addScore(userId, score) }
     }
 
-    fun purchaseTheme(user: User, theme: com.davidspartan.database.realm.Theme): Boolean {
-        viewModelScope.launch {  userRepository.purchaseTheme(user, theme) }
-        return true
+    fun purchaseTheme(user: User, theme: Theme, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.purchaseTheme(user, theme)
+            onResult(result)
+        }
     }
 
     fun selectTheme(user: User, theme: com.davidspartan.database.realm.Theme) {

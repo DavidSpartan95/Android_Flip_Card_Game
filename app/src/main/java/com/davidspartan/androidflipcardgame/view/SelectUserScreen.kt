@@ -28,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,12 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.davidspartan.database.realm.AllThemes
-import com.davidspartan.androidflipcardgame.model.isValidUsernameForUser
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
+import com.davidspartan.database.realm.User
 
 
 @Composable
@@ -63,10 +62,10 @@ fun SelectUserScreen(
     val showPopup = rememberSaveable { mutableStateOf(false) } // Track if popup is visible
     val showDeleteDialog = rememberSaveable { mutableStateOf(false) }
     val showInfoDialog = remember { mutableStateOf(false) }
-    var userSelected by remember { mutableStateOf<com.davidspartan.database.realm.User?>(null) }
+    var userSelected by remember { mutableStateOf<User?>(null) }
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val theme = viewModel.getSelectedUser()?: AllThemes[0]
+    val theme = viewModel.getSelectedUser() ?: AllThemes[0]
 
     Box(
         modifier = Modifier
@@ -78,8 +77,7 @@ fun SelectUserScreen(
         Column(
             Modifier
                 .padding(16.dp)
-                .padding(WindowInsets.statusBars.asPaddingValues())
-            ,
+                .padding(WindowInsets.statusBars.asPaddingValues()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -87,7 +85,7 @@ fun SelectUserScreen(
                 text = "Create New User",
                 theme = theme
             ) {
-                if (users.size>=8) {
+                if (users.size >= 8) {
                     Toast.makeText(context, "Max 8 users allowed.", Toast.LENGTH_SHORT).show()
                 } else {
                     showPopup.value = true
@@ -120,8 +118,10 @@ fun SelectUserScreen(
                             )
                             .padding(8.dp)
                             .clickable {
-                                viewModel.selectUser(user)
-                                navController.navigate(Home)
+                                if (navController.currentDestination?.route?.contains("NewUser") == true){
+                                    viewModel.selectUser(user)
+                                    navController.navigate(Home)
+                                }
                             }
                             .width(screenWidth * 0.45f)
                             .testTag(user.name)
@@ -216,17 +216,26 @@ fun CreateUserPopupBox(
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = stringToColor(AllThemes[0].primaryHexColor)),
                 onClick = {
-
-                    if (isValidUsernameForUser(newUserName)) {
-                        viewModel.addUser(name = newUserName)
-                        onDismiss()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "Invalid username. Only letters and numbers allowed (max 16 characters).",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    viewModel.addUser(
+                        name = newUserName,
+                        onResult = { result ->
+                            if (result.first) {
+                                Toast.makeText(
+                                    context,
+                                    result.second,
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                                onDismiss()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    result.second,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    )
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
