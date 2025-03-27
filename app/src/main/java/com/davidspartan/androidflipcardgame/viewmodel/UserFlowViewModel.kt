@@ -59,9 +59,11 @@ class UserFlowViewModel(private val userRepository: UserRepository) : ViewModel(
         viewModelScope.launch { userRepository.addScore(userId, score) }
     }
 
-    fun purchaseTheme(user: User, theme: com.davidspartan.database.realm.Theme): Boolean {
-        viewModelScope.launch {  userRepository.purchaseTheme(user, theme) }
-        return true
+    fun purchaseTheme(user: User, theme: Theme, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.purchaseTheme(user, theme)
+            onResult(result)
+        }
     }
 
     fun selectTheme(user: User, theme: com.davidspartan.database.realm.Theme) {

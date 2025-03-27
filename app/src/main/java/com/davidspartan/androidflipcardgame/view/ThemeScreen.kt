@@ -178,18 +178,18 @@ fun ThemeScreenContent(
         DialogPopup(
             onDismissRequest = { showDeleteDialog = false },
             onConfirmation = {
-
-                if (viewModel.purchaseTheme(user, themeSelectedForPurchase)) {
-                    viewModel.selectTheme(user, themeSelectedForPurchase)
-                    showDeleteDialog = false
-                } else {
-                    Toast.makeText(
-                        context,
-                        "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                viewModel.purchaseTheme(user, themeSelectedForPurchase) { success ->
+                    if (success) {
+                        viewModel.selectTheme(user, themeSelectedForPurchase)
+                        showDeleteDialog = false
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
-
             },
             dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
             dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
