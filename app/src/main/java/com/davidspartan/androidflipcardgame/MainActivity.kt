@@ -10,8 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import com.davidspartan.androidflipcardgame.view.components.Background
-import com.davidspartan.androidflipcardgame.view.components.OptionButton
-import com.davidspartan.database.realm.AllThemes
+import com.davidspartan.androidflipcardgame.view.navigation.NavHost
 
 
 class MainActivity : ComponentActivity() {
@@ -28,13 +27,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            Background {
-                OptionButton(
-                    text = "TEST",
-                    theme = AllThemes[0]
-                ) { }
-            }
-            //NavHost(navController)
+
+            NavHost(navController)
         }
     }
 }

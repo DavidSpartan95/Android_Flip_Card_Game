@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.stringToColor
+import com.davidspartan.androidflipcardgame.view.components.Background
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
@@ -66,115 +67,118 @@ fun SelectUserScreen(
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val theme = viewModel.getSelectedUser() ?: AllThemes[0]
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(stringToColor(theme.primaryHexColor)),
-        contentAlignment = Alignment.TopCenter
+    Background(
+        theme = theme
     ) {
-
-        Column(
-            Modifier
-                .padding(16.dp)
-                .padding(WindowInsets.statusBars.asPaddingValues()),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            OptionButton(
-                text = "Create New User",
-                theme = theme
+
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (users.size >= 8) {
-                    Toast.makeText(context, "Max 8 users allowed.", Toast.LENGTH_SHORT).show()
-                } else {
-                    showPopup.value = true
-                }
-            }
-
-            Spacer(modifier = Modifier.height(50.dp))
-
-            users.forEach { user ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                OptionButton(
+                    text = "Create New User",
+                    theme = theme
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "Info",
-                        tint = stringToColor(theme.primaryHexColor),
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .clickable {
-                                // Handle info click here
-                            }
-                    )
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .background(
-                                color = stringToColor(theme.secondaryHexColor),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .padding(8.dp)
-                            .clickable {
-                                if (navController.currentDestination?.route?.contains("NewUser") == true){
-                                    viewModel.selectUser(user)
-                                    navController.navigate(Home)
-                                }
-                            }
-                            .width(screenWidth * 0.45f)
-                            .testTag(user.name)
+                    if (users.size >= 8) {
+                        Toast.makeText(context, "Max 8 users allowed.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        showPopup.value = true
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(50.dp))
+
+                users.forEach { user ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = user.name,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = stringToColor(theme.textHexColor)
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Info",
+                            tint = stringToColor(theme.primaryHexColor),
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .clickable {
+                                    // Handle info click here
+                                }
+                        )
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .background(
+                                    color = stringToColor(theme.secondaryHexColor),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(8.dp)
+                                .clickable {
+                                    if (navController.currentDestination?.route?.contains("NewUser") == true){
+                                        viewModel.selectUser(user)
+                                        navController.navigate(Home)
+                                    }
+                                }
+                                .width(screenWidth * 0.45f)
+                                .testTag(user.name)
+                        ) {
+                            Text(
+                                text = user.name,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = stringToColor(theme.textHexColor)
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Default.Delete, // Trashcan icon
+                            contentDescription = "Delete User",
+                            tint = stringToColor("#DA5A2A"),
+                            modifier = Modifier
+                                .padding(8.dp) // Optional padding around the icon
+                                .clickable {
+                                    userSelected = user
+                                    showDeleteDialog.value = true
+                                }
                         )
                     }
-                    Icon(
-                        imageVector = Icons.Default.Delete, // Trashcan icon
-                        contentDescription = "Delete User",
-                        tint = stringToColor("#DA5A2A"),
-                        modifier = Modifier
-                            .padding(8.dp) // Optional padding around the icon
-                            .clickable {
-                                userSelected = user
-                                showDeleteDialog.value = true
-                            }
-                    )
                 }
             }
-        }
 
-        if (showDeleteDialog.value) {
-            DialogPopup(
-                onDismissRequest = { showDeleteDialog.value = false },
-                onConfirmation = {
-                    userSelected?.let { user ->
-                        viewModel.deleteUser(user)
-                    }
-                    showDeleteDialog.value = false
-                },
-                dialogTitle = "DELETE USER",
-                dialogText = "are you user you want to delete this user ?",
-                icon = Icons.Default.Delete
-            )
-        }
+            if (showDeleteDialog.value) {
+                DialogPopup(
+                    onDismissRequest = { showDeleteDialog.value = false },
+                    onConfirmation = {
+                        userSelected?.let { user ->
+                            viewModel.deleteUser(user)
+                        }
+                        showDeleteDialog.value = false
+                    },
+                    dialogTitle = "DELETE USER",
+                    dialogText = "are you user you want to delete this user ?",
+                    icon = Icons.Default.Delete
+                )
+            }
 
-        // Show popup with darkened or blurred background
-        if (showPopup.value) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)) // Darkened background
-                    .clickable { showPopup.value = false } // Dismiss popup on background click
-            ) {
-                CreateUserPopupBox(viewModel, onDismiss = { showPopup.value = false })
+            // Show popup with darkened or blurred background
+            if (showPopup.value) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f)) // Darkened background
+                        .clickable { showPopup.value = false } // Dismiss popup on background click
+                ) {
+                    CreateUserPopupBox(viewModel, onDismiss = { showPopup.value = false })
+                }
             }
         }
     }
+
 }
 
 @Composable

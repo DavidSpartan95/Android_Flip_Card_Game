@@ -4,9 +4,9 @@ package com.davidspartan.database.realm
 val AllThemes = listOf(
     Theme().apply {
         name = "Default"
-        primaryHexColor = "#50586C"
+        primaryHexColor = "#FF923FFF"
         secondaryHexColor = "#DCE2F0"
-        textHexColor = "#50586C"
+        textHexColor = "#FF923FFF"
         price = 0
     },
     Theme().apply {

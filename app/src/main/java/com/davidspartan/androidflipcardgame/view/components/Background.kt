@@ -18,14 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.database.realm.AllThemes
+import com.davidspartan.database.realm.Theme
 
 @Composable
-fun Background(content: @Composable () -> Unit) {
+fun Background(theme: Theme, content: @Composable () -> Unit) {
     Box(
         Modifier
             .fillMaxSize()
-            .background(Color(0xFF923FFF)),
+            .background(stringToColor(color = theme.primaryHexColor)),
         Alignment.Center
         ){
         DotGrid()
