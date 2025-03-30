@@ -21,10 +21,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,16 +37,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.Background
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.DeleteButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.SelectUserButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.database.realm.User
@@ -62,7 +59,6 @@ fun SelectUserScreen(
     val users by viewModel.users.collectAsState(initial = emptyList()) // Provide an initial value
     val showPopup = rememberSaveable { mutableStateOf(false) } // Track if popup is visible
     val showDeleteDialog = rememberSaveable { mutableStateOf(false) }
-    val showInfoDialog = remember { mutableStateOf(false) }
     var userSelected by remember { mutableStateOf<User?>(null) }
     val context = LocalContext.current
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -100,53 +96,23 @@ fun SelectUserScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = "Info",
-                            tint = stringToColor(theme.primaryHexColor),
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .clickable {
-                                    // Handle info click here
+                        SelectUserButton(
+                            username = user.name,
+                            onClick = {
+                                if (navController.currentDestination?.route?.contains("NewUser") == true){
+                                    viewModel.selectUser(user)
+                                    navController.navigate(Home)
                                 }
+                            }
                         )
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .background(
-                                    color = stringToColor(theme.secondaryHexColor),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(8.dp)
-                                .clickable {
-                                    if (navController.currentDestination?.route?.contains("NewUser") == true){
-                                        viewModel.selectUser(user)
-                                        navController.navigate(Home)
-                                    }
-                                }
-                                .width(screenWidth * 0.45f)
-                                .testTag(user.name)
-                        ) {
-                            Text(
-                                text = user.name,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = stringToColor(theme.textHexColor)
-                            )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        DeleteButton {
+                            userSelected = user
+                            showDeleteDialog.value = true
                         }
-                        Icon(
-                            imageVector = Icons.Default.Delete, // Trashcan icon
-                            contentDescription = "Delete User",
-                            tint = stringToColor("#DA5A2A"),
-                            modifier = Modifier
-                                .padding(8.dp) // Optional padding around the icon
-                                .clickable {
-                                    userSelected = user
-                                    showDeleteDialog.value = true
-                                }
-                        )
+
                     }
+                    Spacer(modifier = Modifier.height(28.dp))
                 }
             }
 
