@@ -53,7 +53,7 @@ fun SelectUserButton(username: String, onClick: () -> Unit) {
 
 // Shrinking effect extension function
 @Composable
-fun Modifier.shrinkOnPress(scaleFactor: Float = 0.9f,onClick: () -> Unit): Modifier {
+fun Modifier.shrinkOnPress(scaleFactor: Float = 0.9f, onClick: () -> Unit): Modifier {
     var isPressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(
         targetValue = if (isPressed) scaleFactor else 1f,
@@ -66,9 +66,11 @@ fun Modifier.shrinkOnPress(scaleFactor: Float = 0.9f,onClick: () -> Unit): Modif
             detectTapGestures(
                 onPress = {
                     isPressed = true
-                    tryAwaitRelease()
+                    val releaseSuccess = tryAwaitRelease() // Wait for user to lift finger
                     isPressed = false
-                    onClick.invoke()
+                    if (releaseSuccess) { // Only invoke if released on the same element
+                        onClick.invoke()
+                    }
                 }
             )
         }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -43,7 +44,7 @@ import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.Background
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
-import com.davidspartan.androidflipcardgame.view.components.OptionButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.CreateUserButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.DeleteButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.SelectUserButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
@@ -79,41 +80,45 @@ fun SelectUserScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                OptionButton(
-                    text = "Create New User",
-                    theme = theme
+
+                Spacer(modifier = Modifier.height(50.dp))
+
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(28.dp) // Keeps spacing between items
                 ) {
-                    if (users.size >= 8) {
+                    items(users.size) { userIndex ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            SelectUserButton(
+                                username = users[userIndex].name,
+                                onClick = {
+                                    if (navController.currentDestination?.route?.contains("NewUser") == true) {
+                                        viewModel.selectUser(users[userIndex])
+                                        navController.navigate(Home)
+                                    }
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            DeleteButton {
+                                userSelected = users[userIndex]
+                                showDeleteDialog.value = true
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+
+                CreateUserButton {
+                    if (users.size >= 90) {
                         Toast.makeText(context, "Max 8 users allowed.", Toast.LENGTH_SHORT).show()
                     } else {
                         showPopup.value = true
                     }
                 }
 
-                Spacer(modifier = Modifier.height(50.dp))
-
-                users.forEach { user ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        SelectUserButton(
-                            username = user.name,
-                            onClick = {
-                                if (navController.currentDestination?.route?.contains("NewUser") == true){
-                                    viewModel.selectUser(user)
-                                    navController.navigate(Home)
-                                }
-                            }
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        DeleteButton {
-                            userSelected = user
-                            showDeleteDialog.value = true
-                        }
-
-                    }
-                    Spacer(modifier = Modifier.height(28.dp))
-                }
+                Spacer(modifier = Modifier.height(76.dp))
             }
 
             if (showDeleteDialog.value) {
