@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.stringToColor
-import com.davidspartan.androidflipcardgame.view.components.Background
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.Background
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.buttons.WideOrangeButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.DeleteButton

@@ -1,4 +1,4 @@
-package com.davidspartan.androidflipcardgame.view.components
+package com.davidspartan.androidflipcardgame.view.components.backgroundelements
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
