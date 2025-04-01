@@ -16,7 +16,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.davidspartan.androidflipcardgame.R
 
 @Composable
-fun CreateUserButton(onClick: () -> Unit) {
+fun WideOrangeButton(onClick: () -> Unit) {
 
     Box(
         contentAlignment = Alignment.Center,

@@ -44,7 +44,7 @@ import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.Background
 import com.davidspartan.androidflipcardgame.view.components.DialogPopup
-import com.davidspartan.androidflipcardgame.view.components.buttons.CreateUserButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.WideOrangeButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.DeleteButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.SelectUserButton
 import com.davidspartan.androidflipcardgame.view.navigation.Home
@@ -110,7 +110,7 @@ fun SelectUserScreen(
                 }
                 Spacer(modifier = Modifier.height(20.dp))
 
-                CreateUserButton {
+                WideOrangeButton {
                     if (users.size >= 90) {
                         Toast.makeText(context, "Max 8 users allowed.", Toast.LENGTH_SHORT).show()
                     } else {

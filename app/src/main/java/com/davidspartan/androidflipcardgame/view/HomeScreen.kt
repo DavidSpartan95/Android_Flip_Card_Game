@@ -24,6 +24,8 @@ import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
+import com.davidspartan.androidflipcardgame.view.components.buttons.PlayButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.ThemeButton
 import com.davidspartan.androidflipcardgame.view.navigation.Appearance
 import com.davidspartan.androidflipcardgame.view.navigation.Game
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
@@ -131,19 +133,15 @@ fun MenuButtons(user: User, navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Display content when a user is logged in
-        OptionButton(
-            text = "Play",
-            theme = user.selectedTheme
+        PlayButton(
+            text = "Play"
         ) {
             navController.navigate(Game)
         }
 
-        Spacer(modifier = Modifier.size(5.dp))
+        Spacer(modifier = Modifier.size(16.dp))
 
-        OptionButton(
-            text = "Themes",
-            theme = user.selectedTheme
-        ) {
+        ThemeButton {
             navController.navigate(Appearance)
         }
 
