@@ -21,9 +21,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.model.stringToColor
+import com.davidspartan.androidflipcardgame.view.components.Background
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
+import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.PlayButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.ThemeButton
 import com.davidspartan.androidflipcardgame.view.navigation.Appearance
@@ -43,11 +45,12 @@ fun HomeScreen(
     when (uiState) {
 
         is UserUiState.LoggedIn -> {
-
             val user = (uiState as UserUiState.LoggedIn).selectedUser
-
-            HomeMenuContent(user, navController)
-
+            Background(
+                theme = user.selectedTheme
+            ) {
+                HomeMenuContent(user, navController)
+            }
         }
 
         UserUiState.LoggedOut -> {
@@ -69,7 +72,6 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                 horizontalArrangement = Arrangement.SpaceEvenly
 
@@ -85,7 +87,6 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -147,12 +148,10 @@ fun MenuButtons(user: User, navController: NavHostController) {
 
         Spacer(modifier = Modifier.size(5.dp))
 
-        OptionButton(
-            text = "Go Back To Login",
-            theme = user.selectedTheme
+        OrangeButton(
+            text = "Go Back To Login"
         ) {
             navController.navigateUp()
-
         }
     }
 
