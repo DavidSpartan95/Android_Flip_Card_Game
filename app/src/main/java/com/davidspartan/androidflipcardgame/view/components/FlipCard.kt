@@ -24,10 +24,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.davidspartan.androidflipcardgame.R
 import com.davidspartan.model.Card
 import com.davidspartan.database.realm.Theme
 import com.davidspartan.androidflipcardgame.model.stringToColor
+import com.davidspartan.androidflipcardgame.view.components.buttons.shrinkOnPress
 
 @Composable
 fun FlipCard(
@@ -52,8 +54,8 @@ fun FlipCard(
     Box(
         modifier = Modifier
             .padding(16.dp)
-            .size(cardSize) // Set size to 25% of screen width
-            .clickable {
+            .size(width = 106.dp, height = 154.dp) // Set size to 25% of screen width
+            .shrinkOnPress {
                 if (!isFlipped) flipAction.invoke()
             }
             .graphicsLayer {
@@ -73,10 +75,10 @@ fun FlipCard(
 
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.card_back),
+                    painter = rememberAsyncImagePainter(model = R.drawable.card_backside),
                     contentDescription = "Card Back",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize(),
-                    colorFilter = ColorFilter.tint(stringToColor(theme.textHexColor))
                 )
             }
 
