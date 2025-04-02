@@ -1,10 +1,13 @@
 package com.davidspartan.androidflipcardgame.view.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,18 +20,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.davidspartan.androidflipcardgame.R
+import com.davidspartan.androidflipcardgame.model.stringToColor
+import com.davidspartan.database.realm.Theme
 
 @Composable
-fun FlipScoreTracker(score: Int, totalFlips: Int) {
+fun FlipScoreTracker(score: Int, totalFlips: Int, theme: Theme) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(width = 218.dp, height = 52.dp)
+            .background(color = stringToColor(theme.secondaryHexColor), shape = RoundedCornerShape(size = 8.dp))
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = R.drawable.purple_plate),
-            contentDescription = "tracker plate"
-        )
+
         Tracker(
             score = score,
             totalFlips = totalFlips

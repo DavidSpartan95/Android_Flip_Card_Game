@@ -37,6 +37,7 @@ import com.davidspartan.androidflipcardgame.viewmodel.GameUiState
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
+import com.davidspartan.database.realm.Theme
 import com.davidspartan.database.realm.User
 import com.davidspartan.model.Card
 import com.davidspartan.model.GameState
@@ -83,7 +84,8 @@ fun GameScreen(
                         GameIsOverContent(
                             gameState = gameState,
                             navController = navController,
-                            gameViewModel = gameViewModel
+                            gameViewModel = gameViewModel,
+                            user = selectedUser
                         )
                     }
                 }
@@ -127,7 +129,8 @@ fun GameIsPlayingContent(
                     Spacer(modifier = Modifier.size(27.dp))
                     FlipScoreTracker(
                         score = gameState.score,
-                        totalFlips = gameState.totalFlips
+                        totalFlips = gameState.totalFlips,
+                        theme = user.selectedTheme
                     )
                     Spacer(modifier = Modifier.weight(1f))
 
@@ -143,7 +146,8 @@ fun GameIsPlayingContent(
                 }
                 GameBoard(
                     cards = cards,
-                    gameViewModel = gameViewModel
+                    gameViewModel = gameViewModel,
+                    theme = user.selectedTheme
                 )
             }
         }
@@ -164,14 +168,16 @@ fun GameIsPlayingContent(
                 Spacer(modifier = Modifier.weight(0.5f))
                 FlipScoreTracker(
                     score = gameState.score,
-                    totalFlips = gameState.totalFlips
+                    totalFlips = gameState.totalFlips,
+                    theme = user.selectedTheme
                 )
 
                 Spacer(modifier = Modifier.size(27.dp))
                 
                 GameBoard(
                     cards = cards,
-                    gameViewModel = gameViewModel
+                    gameViewModel = gameViewModel,
+                    theme = user.selectedTheme
                 )
                 
                 Spacer(modifier = Modifier.weight(0.5f))
@@ -195,7 +201,8 @@ fun GameIsPlayingContent(
 fun GameIsOverContent(
     gameState: GameState,
     navController: NavHostController,
-    gameViewModel: GameViewModel
+    gameViewModel: GameViewModel,
+    user: User
 ) {
     var isNavigating by rememberSaveable { mutableStateOf(false) }
 
@@ -214,7 +221,8 @@ fun GameIsOverContent(
         ) {
             GameResultFrame(
                 score = gameState.score,
-                totalFlips = gameState.totalFlips
+                totalFlips = gameState.totalFlips,
+                theme = user.selectedTheme
             )
             Spacer(modifier = Modifier.size(50.dp))
 
@@ -238,8 +246,8 @@ fun GameIsOverContent(
 
 
 @Composable
-fun GameBoard(cards: List<Card>, gameViewModel: GameViewModel) {
-    GameBoardFrame {
+fun GameBoard(cards: List<Card>, gameViewModel: GameViewModel, theme: Theme) {
+    GameBoardFrame(theme) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

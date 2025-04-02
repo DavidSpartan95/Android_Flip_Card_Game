@@ -194,7 +194,7 @@ fun ThemeSampleGrid(
     viewModel: UserFlowViewModel,
     selectTheme: (Theme) -> Unit // Accept Theme as a parameter
 ) {
-    GameBoardFrame {
+    GameBoardFrame(user.selectedTheme) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

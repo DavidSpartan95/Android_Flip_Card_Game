@@ -12,20 +12,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.davidspartan.androidflipcardgame.model.stringToColor
+import com.davidspartan.database.realm.Theme
 
 @Composable
-fun GameBoardFrame(content: @Composable () -> Unit) {
+fun GameBoardFrame(theme: Theme, content: @Composable () -> Unit) {
+    val originalColor = stringToColor(theme.secondaryHexColor)
+    val lighterColor = originalColor.copy(alpha = 0.8f)
+
     Box(
         Modifier
-            .shadow(elevation = 52.dp, spotColor = Color(0x40000000), ambientColor = Color(0x40000000))
+            .shadow(
+                elevation = 12.dp,
+                shape = RoundedCornerShape(22.dp),
+                spotColor = Color(0x80000000)
+            )
             .width(389.dp)
             .height(375.dp)
-            .background(color = Color(0xFF7410CB), shape = RoundedCornerShape(size = 22.dp))
-            .border(width = 10.dp, color = Color(0xFF9A4DFF), shape = RoundedCornerShape(size = 22.dp)),
+            .background(color = lighterColor, shape = RoundedCornerShape(size = 22.dp))
+            .border(width = 10.dp, stringToColor(theme.primaryHexColor), shape = RoundedCornerShape(size = 22.dp)),
         Alignment.Center
-    )
-    {
+    ) {
         content()
     }
-
 }
