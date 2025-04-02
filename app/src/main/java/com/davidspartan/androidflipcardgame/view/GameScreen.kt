@@ -119,9 +119,12 @@ fun GameIsPlayingContent(
                         .fillMaxHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    ThemedText(
-                        text = "${user.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
-                        theme = user.selectedTheme
+                    NamePlate(
+                        name = user.name
+                    )
+                    FlipScoreTracker(
+                        score = gameState.score,
+                        totalFlips = gameState.totalFlips
                     )
                     Spacer(modifier = Modifier.size(50.dp))
 
