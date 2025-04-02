@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,8 +14,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,42 +33,38 @@ import com.davidspartan.androidflipcardgame.view.components.buttons.shrinkOnPres
 import com.davidspartan.database.realm.Theme
 
 @Composable
-fun ThemeCard(text: String, theme: Theme,selected: Boolean ,onClick: () -> Unit) {
+fun ThemeCard(text: String, theme: Theme, selected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .shadow(elevation = 10.dp, spotColor = Color(0x26000000), ambientColor = Color(0x26000000))
+            .shadow(
+                elevation = 10.dp,
+                spotColor = Color(0x26000000),
+                ambientColor = Color(0x26000000)
+            )
             .padding(3.dp)
             .size(width = 106.dp, height = 154.dp)
             .background(
                 stringToColor(color = theme.primaryHexColor),
                 shape = RoundedCornerShape(8.dp)
             )
-
             .shrinkOnPress {
                 onClick.invoke()
             },
         Alignment.Center
-    ){
+    ) {
         DotGrid()
-        AutoResizedText(
+        ThemedText(
             text = text,
-            style = TextStyle(
-                fontFamily = FontFamily(Font(R.font.pally)),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier,
-            color = Color.White
+            theme = theme
         )
-        if(selected){
+        if (selected) {
             Icon(
-                imageVector = Icons.Default.Check,
+                imageVector = Icons.Default.CheckCircle,
                 contentDescription = "Selected",
-                tint = Color.White,
+                tint = stringToColor("#FEB93A"),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(6.dp) // Adds space around the icon
-                    .size(20.dp) // Adjust size if needed
+                    .size(24.dp) // Adjust size if needed
             )
         }
     }
@@ -77,7 +74,7 @@ fun ThemeCard(text: String, theme: Theme,selected: Boolean ,onClick: () -> Unit)
 private fun DotGrid() {
 
     val columns = 9
-    val rows =  12
+    val rows = 12
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -100,5 +97,31 @@ private fun DotGrid() {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ThemedText(text: String, theme: Theme) {
+
+    Row(
+        modifier = Modifier
+            .size(width = 84.dp, height = 28.6.dp)
+            .background(
+                color = stringToColor(color = theme.secondaryHexColor),
+                shape = RoundedCornerShape(8.dp)
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        AutoResizedText(
+            text = text,
+            style = TextStyle(
+                fontFamily = FontFamily(Font(R.font.pally)),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier,
+            color = Color.White
+        )
     }
 }

@@ -2,7 +2,6 @@ package com.davidspartan.androidflipcardgame.view
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,8 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.view.components.FlipCard
 import com.davidspartan.androidflipcardgame.view.components.FlipScoreTracker
-import com.davidspartan.androidflipcardgame.view.components.OptionButton
-import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.AppBackground
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameBoardFrame

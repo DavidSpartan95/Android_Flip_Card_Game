@@ -5,15 +5,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.view.navigation.NewUser
-import com.davidspartan.database.realm.AllThemes
 
 @Composable
 fun UserNotLoggedInScreen(navController: NavHostController) {
 
-    ThemedText(
-        text = "USER HAS BEEN LOGGED OUT",
-        theme = AllThemes[0]
-    )
+    Text(text = "USER HAS NOT LOGGED IN")
+
 
     Button(onClick = {
         navController.navigate(NewUser) {
