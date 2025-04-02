@@ -21,7 +21,7 @@ import com.davidspartan.database.realm.Theme
 
 
 @Composable
-fun Background(theme: Theme, content: @Composable () -> Unit) {
+fun AppBackground(theme: Theme, content: @Composable () -> Unit) {
     Box(
         Modifier
             .fillMaxSize()

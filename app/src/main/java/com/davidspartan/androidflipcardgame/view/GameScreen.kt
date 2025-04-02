@@ -2,6 +2,7 @@ package com.davidspartan.androidflipcardgame.view
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,10 +29,12 @@ import com.davidspartan.androidflipcardgame.view.components.FlipScoreTracker
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
-import com.davidspartan.androidflipcardgame.view.components.backgroundelements.Background
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.AppBackground
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameBoardFrame
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameResultFrame
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.NamePlate
 import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.PlayButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.WideOrangeButton
 import com.davidspartan.androidflipcardgame.viewmodel.GameUiState
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
@@ -62,7 +65,7 @@ fun GameScreen(
 
                 is GameUiState.Playing -> {
                     val gameState = (gameUiState as GameUiState.Playing).gameState
-                    Background(
+                    AppBackground(
                         theme = selectedUser.selectedTheme
                     ) {
                         GameIsPlayingContent(
@@ -77,11 +80,10 @@ fun GameScreen(
 
                 is GameUiState.GameOver -> {
                     val gameState = (gameUiState as GameUiState.GameOver).gameState
-                    Background(
+                    AppBackground(
                         theme = selectedUser.selectedTheme
                     ) {
                         GameIsOverContent(
-                            user = selectedUser,
                             gameState = gameState,
                             navController = navController,
                             gameViewModel = gameViewModel
@@ -185,7 +187,7 @@ fun GameIsPlayingContent(
                         navController.navigateUp()
                     }
                 }
-                Spacer(modifier = Modifier.size(27.dp))
+                Spacer(modifier = Modifier.size(72.dp))
             }
         }
     }
@@ -194,41 +196,49 @@ fun GameIsPlayingContent(
 
 @Composable
 fun GameIsOverContent(
-    user: User,
     gameState: GameState,
     navController: NavHostController,
     gameViewModel: GameViewModel
 ) {
     var isNavigating by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ThemedText(
-            text = "Result\nScore: ${gameState.score}\nTotal flips: ${gameState.totalFlips}",
-            theme = user.selectedTheme
-        )
-        Spacer(modifier = Modifier.size(50.dp))
-        OptionButton(
-            text = "New Game",
-            theme = user.selectedTheme
+        Spacer(modifier = Modifier.weight(0.5f))
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp), // Optional: Adds horizontal padding
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            gameViewModel.resetGame()
+            GameResultFrame(
+                score = gameState.score,
+                totalFlips = gameState.totalFlips
+            )
+            Spacer(modifier = Modifier.size(50.dp))
+
+            PlayButton(text = "New Game") {
+                gameViewModel.resetGame()
+            }
         }
-        Spacer(modifier = Modifier.size(8.dp))
-        OptionButton(
+        Spacer(modifier = Modifier.weight(0.5f))
+
+        WideOrangeButton(
             text = "Go To Menu",
-            theme = user.selectedTheme
         ) {
-            if(!isNavigating){
+            if (!isNavigating) {
                 isNavigating = true
                 navController.navigateUp()
             }
         }
+        Spacer(modifier = Modifier.size(72.dp))
     }
 }
+
 
 @Composable
 fun GameBoard(cards: List<Card>, gameViewModel: GameViewModel) {

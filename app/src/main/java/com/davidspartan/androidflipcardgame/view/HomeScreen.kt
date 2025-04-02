@@ -21,8 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.davidspartan.androidflipcardgame.view.components.backgroundelements.Background
-import com.davidspartan.androidflipcardgame.view.components.ThemedText
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.AppBackground
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.NamePlate
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.PointPlate
@@ -47,7 +46,7 @@ fun HomeScreen(
 
         is UserUiState.LoggedIn -> {
             val user = (uiState as UserUiState.LoggedIn).selectedUser
-            Background(
+            AppBackground(
                 theme = user.selectedTheme
             ) {
                 HomeMenuContent(user, navController)
