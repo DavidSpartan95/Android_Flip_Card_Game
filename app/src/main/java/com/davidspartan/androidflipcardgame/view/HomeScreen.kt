@@ -85,7 +85,7 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height(14.dp))
                     PointPlate(
-                        name = "Points: ${user.score}"
+                        points = "Points: ${user.score}"
                     )
                 }
 
@@ -114,7 +114,7 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
                     Spacer(modifier = Modifier.weight(1f))
 
                     PointPlate(
-                        name = "Points: ${user.score}"
+                        points = "Points: ${user.score}"
                     )
                     Spacer(modifier = Modifier.width(14.dp))
                 }

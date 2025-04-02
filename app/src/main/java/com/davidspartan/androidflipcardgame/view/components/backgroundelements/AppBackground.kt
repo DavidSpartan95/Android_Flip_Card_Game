@@ -35,7 +35,7 @@ fun AppBackground(theme: Theme, content: @Composable () -> Unit) {
 }
 
 @Composable
-fun DotGrid() {
+private fun DotGrid() {
     val configuration = LocalConfiguration.current
 
     val columns = when (configuration.orientation) {
@@ -65,7 +65,7 @@ fun DotGrid() {
 }
 
 @Composable
-fun BackgroundDot() {
+private fun BackgroundDot() {
     Canvas(
         modifier = Modifier.size(10.dp) // Size of the dot
     ) {

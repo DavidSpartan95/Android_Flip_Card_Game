@@ -18,7 +18,7 @@ import com.davidspartan.androidflipcardgame.R
 import com.davidspartan.androidflipcardgame.view.components.AutoResizedText
 
 @Composable
-fun PointPlate(name: String) {
+fun PointPlate(points: String) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -29,7 +29,7 @@ fun PointPlate(name: String) {
             contentDescription = "point plate"
         )
         AutoResizedText(
-            text = name,
+            text = points,
             style = TextStyle(
                 fontFamily = FontFamily(Font(R.font.pally)),
                 fontSize = 24.sp,
