@@ -29,9 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.FlipCard
+import com.davidspartan.androidflipcardgame.view.components.FlipScoreTracker
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.NamePlate
 import com.davidspartan.androidflipcardgame.viewmodel.GameUiState
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
@@ -164,11 +166,16 @@ fun GameIsPlayingContent(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ThemedText(
-                    text = "${user.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
-                    theme = user.selectedTheme
+                NamePlate(
+                    name = user.name
                 )
-                Spacer(modifier = Modifier.size(50.dp))
+                FlipScoreTracker(
+                    score = gameState.score,
+                    totalFlips = gameState.totalFlips
+                )
+
+                Spacer(modifier = Modifier.size(27.dp))
+
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3), // 3 cards per row
                     modifier = Modifier
