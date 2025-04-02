@@ -10,13 +10,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,12 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.FlipCard
 import com.davidspartan.androidflipcardgame.view.components.FlipScoreTracker
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.Background
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameBoardFrame
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.NamePlate
 import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
@@ -67,26 +63,31 @@ fun GameScreen(
 
                 is GameUiState.Playing -> {
                     val gameState = (gameUiState as GameUiState.Playing).gameState
-
-                    GameIsPlayingContent(
-                        user = selectedUser,
-                        gameViewModel = gameViewModel,
-                        gameState = gameState,
-                        navController = navController,
-                        cards = cards
-                    )
+                    Background(
+                        theme = selectedUser.selectedTheme
+                    ) {
+                        GameIsPlayingContent(
+                            user = selectedUser,
+                            gameViewModel = gameViewModel,
+                            gameState = gameState,
+                            navController = navController,
+                            cards = cards
+                        )
+                    }
                 }
 
                 is GameUiState.GameOver -> {
                     val gameState = (gameUiState as GameUiState.GameOver).gameState
-
-                    GameIsOverContent(
-                        user = selectedUser,
-                        gameState = gameState,
-                        navController = navController,
-                        gameViewModel = gameViewModel
-                    )
-
+                    Background(
+                        theme = selectedUser.selectedTheme
+                    ) {
+                        GameIsOverContent(
+                            user = selectedUser,
+                            gameState = gameState,
+                            navController = navController,
+                            gameViewModel = gameViewModel
+                        )
+                    }
                 }
             }
         }
@@ -114,7 +115,6 @@ fun GameIsPlayingContent(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -151,8 +151,7 @@ fun GameIsPlayingContent(
         else -> { //Portrait
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor)),
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -197,8 +196,7 @@ fun GameIsOverContent(
     var isNavigating by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(stringToColor(user.selectedTheme.primaryHexColor)),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
