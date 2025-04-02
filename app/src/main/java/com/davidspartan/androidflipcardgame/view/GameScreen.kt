@@ -126,11 +126,12 @@ fun GameIsPlayingContent(
                     NamePlate(
                         name = user.name
                     )
+                    Spacer(modifier = Modifier.size(27.dp))
                     FlipScoreTracker(
                         score = gameState.score,
                         totalFlips = gameState.totalFlips
                     )
-                    Spacer(modifier = Modifier.size(50.dp))
+                    Spacer(modifier = Modifier.weight(1f))
 
                     OrangeButton(
                         text = "Go To Menu"
@@ -140,6 +141,7 @@ fun GameIsPlayingContent(
                             navController.navigateUp()
                         }
                     }
+                    Spacer(modifier = Modifier.size(27.dp))
                 }
                 GameBoard(
                     cards = cards,
@@ -155,9 +157,12 @@ fun GameIsPlayingContent(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.size(27.dp))
+
                 NamePlate(
                     name = user.name
                 )
+                Spacer(modifier = Modifier.weight(0.5f))
                 FlipScoreTracker(
                     score = gameState.score,
                     totalFlips = gameState.totalFlips
@@ -170,7 +175,7 @@ fun GameIsPlayingContent(
                     gameViewModel = gameViewModel
                 )
                 
-                Spacer(modifier = Modifier.size(50.dp))
+                Spacer(modifier = Modifier.weight(0.5f))
 
                 WideOrangeButton(
                     text = "Go To Menu"
@@ -180,6 +185,7 @@ fun GameIsPlayingContent(
                         navController.navigateUp()
                     }
                 }
+                Spacer(modifier = Modifier.size(27.dp))
             }
         }
     }
