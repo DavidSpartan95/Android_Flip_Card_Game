@@ -36,6 +36,8 @@ import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameBoardFrame
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.NamePlate
+import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.WideOrangeButton
 import com.davidspartan.androidflipcardgame.viewmodel.GameUiState
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
@@ -130,9 +132,8 @@ fun GameIsPlayingContent(
                     )
                     Spacer(modifier = Modifier.size(50.dp))
 
-                    OptionButton(
-                        text = "Go To Menu",
-                        theme = user.selectedTheme
+                    OrangeButton(
+                        text = "Go To Menu"
                     ) {
                         if(!isNavigating){
                             isNavigating = true
@@ -172,9 +173,8 @@ fun GameIsPlayingContent(
                 
                 Spacer(modifier = Modifier.size(50.dp))
 
-                OptionButton(
-                    text = "Go To Menu",
-                    theme = user.selectedTheme
+                WideOrangeButton(
+                    text = "Go To Menu"
                 ) {
                     if(!isNavigating){
                         isNavigating = true

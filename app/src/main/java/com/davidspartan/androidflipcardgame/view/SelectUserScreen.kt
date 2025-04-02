@@ -110,7 +110,9 @@ fun SelectUserScreen(
                 }
                 Spacer(modifier = Modifier.height(20.dp))
 
-                WideOrangeButton {
+                WideOrangeButton(
+                    text = "Create New User"
+                ) {
                     if (users.size >= 90) {
                         Toast.makeText(context, "Max 8 users allowed.", Toast.LENGTH_SHORT).show()
                     } else {

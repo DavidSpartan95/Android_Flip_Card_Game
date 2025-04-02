@@ -16,7 +16,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.davidspartan.androidflipcardgame.R
 
 @Composable
-fun WideOrangeButton(onClick: () -> Unit) {
+fun WideOrangeButton(text: String,onClick: () -> Unit) {
 
     Box(
         contentAlignment = Alignment.Center,
@@ -31,7 +31,7 @@ fun WideOrangeButton(onClick: () -> Unit) {
             contentDescription = " Create User Button"
         )
         Text(
-            text = "Create New User",
+            text = text,
             fontSize = 24.sp,
             fontFamily = FontFamily(Font(R.font.pally)),
             color = Color(0xFFC14300)
