@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -33,6 +34,7 @@ import com.davidspartan.androidflipcardgame.view.components.FlipScoreTracker
 import com.davidspartan.androidflipcardgame.view.components.OptionButton
 import com.davidspartan.androidflipcardgame.view.components.ThemedText
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameBoardFrame
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.NamePlate
 import com.davidspartan.androidflipcardgame.viewmodel.GameUiState
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
@@ -138,26 +140,10 @@ fun GameIsPlayingContent(
                         }
                     }
                 }
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3), // 3 cards per row
-                    modifier = Modifier
-                        .background(stringToColor(user.selectedTheme.primaryHexColor)),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    items(cards) { card -> // Iterate over each card directly
-
-                        FlipCard(
-                            theme = user.selectedTheme,
-                            card = card
-                        ) {
-                            gameViewModel.flipCard(
-                                card = card
-                            )
-                        }
-                    }
-                }
-
+                GameBoard(
+                    cards = cards,
+                    gameViewModel = gameViewModel
+                )
             }
         }
 
@@ -178,26 +164,12 @@ fun GameIsPlayingContent(
                 )
 
                 Spacer(modifier = Modifier.size(27.dp))
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3), // 3 cards per row
-                    modifier = Modifier
-                        .background(stringToColor(user.selectedTheme.primaryHexColor)),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    items(cards) { card -> // Iterate over each card directly
-
-                        FlipCard(
-                            theme = user.selectedTheme,
-                            card = card
-                        ) {
-                            gameViewModel.flipCard(
-                                card = card
-                            )
-                        }
-                    }
-                }
-
+                
+                GameBoard(
+                    cards = cards,
+                    gameViewModel = gameViewModel
+                )
+                
                 Spacer(modifier = Modifier.size(50.dp))
 
                 OptionButton(
@@ -249,6 +221,40 @@ fun GameIsOverContent(
             if(!isNavigating){
                 isNavigating = true
                 navController.navigateUp()
+            }
+        }
+    }
+}
+
+@Composable
+fun GameBoard(cards: List<Card>, gameViewModel: GameViewModel) {
+    GameBoardFrame {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Split the list into two rows
+            val firstRow = cards.take(3)  // First 3 cards
+            val secondRow = cards.drop(3) // Last 3 cards
+
+            Row{
+                firstRow.forEach { card ->
+                    FlipCard(
+                        card = card
+                    ) {
+                        gameViewModel.flipCard(card)
+                    }
+                }
+            }
+
+            Row{
+                secondRow.forEach { card ->
+                    FlipCard(
+                        card = card
+                    ) {
+                        gameViewModel.flipCard(card)
+                    }
+                }
             }
         }
     }
