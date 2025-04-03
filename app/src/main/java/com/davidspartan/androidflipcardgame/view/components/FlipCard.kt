@@ -3,6 +3,7 @@ package com.davidspartan.androidflipcardgame.view.components
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,10 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -34,9 +33,6 @@ fun FlipCard(
 ){
     // Bind the `isFlipped` state to `card.isFlipped`
     val isFlipped by rememberUpdatedState(card.isFlipped)
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val cardSize = if (screenWidth < screenHeight) screenWidth * 0.25f else screenHeight * 0.25f
     val colorTag = "card_color_${card.hexColor}" // Convert color to a unique tag
 
     // Animate the rotation angle
@@ -85,12 +81,18 @@ fun FlipCard(
                         rotationY = 180f
                     }
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.android_card_front),
-                    contentDescription = "Card Back",
-                    contentScale = ContentScale.Crop,
-                    colorFilter = ColorFilter.tint(stringToColor(card.hexColor))
-                )
+                Box(
+                    modifier = Modifier
+                        .size(width = 106.dp, height = 154.dp)
+                        .background(stringToColor(card.hexColor))
+                    ,
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.android),
+                        contentDescription = "Card Back"
+                    )
+                }
             }
         }
     }
