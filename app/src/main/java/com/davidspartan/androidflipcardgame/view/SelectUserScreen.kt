@@ -1,6 +1,7 @@
 package com.davidspartan.androidflipcardgame.view
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,13 +16,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,15 +43,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.davidspartan.androidflipcardgame.R
 import com.davidspartan.database.realm.AllThemes
 import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.AppBackground
-import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.buttons.WideOrangeButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.DeleteButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.SelectUserButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.shrinkOnPress
 import com.davidspartan.androidflipcardgame.view.navigation.Home
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.database.realm.Theme
@@ -129,17 +130,18 @@ fun SelectUserScreen(
             }
 
             if (showDeleteDialog.value) {
-                DialogPopup(
-                    onDismissRequest = { showDeleteDialog.value = false },
+
+                DeleteUserPopupBox(
+                    theme = theme,
+                    onDismiss = {
+                        showDeleteDialog.value = false
+                    },
                     onConfirmation = {
                         userSelected?.let { user ->
                             viewModel.deleteUser(user)
                         }
                         showDeleteDialog.value = false
-                    },
-                    dialogTitle = "DELETE USER",
-                    dialogText = "are you user you want to delete this user ?",
-                    icon = Icons.Default.Delete
+                    }
                 )
             }
 
@@ -198,8 +200,10 @@ fun CreateUserPopupBox(
 
             Box(
                 modifier = Modifier
-                    .shadow(elevation = 6.dp, spotColor = Color.Black, ambientColor = Color.Black,
-                        shape = RoundedCornerShape(size = 12.dp))
+                    .shadow(
+                        elevation = 6.dp, spotColor = Color.Black, ambientColor = Color.Black,
+                        shape = RoundedCornerShape(size = 12.dp)
+                    )
                     .width(268.dp)
                     .height(56.dp)
                     .background(
@@ -210,9 +214,7 @@ fun CreateUserPopupBox(
                         width = 2.dp,
                         color = stringToColor(theme.primaryHexColor),
                         shape = RoundedCornerShape(size = 12.dp)
-                    )
-
-                ,
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 BasicTextField(
@@ -261,6 +263,92 @@ fun CreateUserPopupBox(
                         }
                     }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun DeleteUserPopupBox(
+    theme: Theme,
+    onDismiss: () -> Unit,
+    onConfirmation: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable { onConfirmation.invoke() }
+        ,
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            Modifier
+                .width(318.dp)
+                .height(300.dp)
+                .background(
+                    color = stringToColor(theme.primaryHexColor),
+                    shape = RoundedCornerShape(size = 20.dp)
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(50.dp),
+                    painter = rememberAsyncImagePainter(model = R.drawable.delete_trash),
+                    contentDescription = "shopping back icon",
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "DELETE USER",
+                    style = TextStyle(
+                        fontSize = 26.sp,
+                        fontFamily = FontFamily(Font(R.font.pally)),
+                        fontWeight = FontWeight(700),
+                        color = Color(0xFFFFFFFF),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Are you sure you want to\n delete this user?",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.pally)),
+                        fontWeight = FontWeight(500),
+                        color = Color(0xFFEAEAEA),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                OrangeButton(
+                    text = "Dismiss"
+                ) {
+                    onDismiss.invoke()
+                }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(width = 240.dp, height = 56.dp)
+                        .shrinkOnPress {
+                            onConfirmation.invoke()
+                        }
+                ) {
+                    Text(
+                        text = "Confirm",
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.pally)),
+                            fontWeight = FontWeight(700),
+                            color = Color(0xFFFFFFFF),
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+                }
             }
         }
     }
