@@ -2,6 +2,7 @@ package com.davidspartan.androidflipcardgame.view
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,12 +14,14 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,10 +34,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import com.davidspartan.androidflipcardgame.R
+import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.database.realm.AllThemes
-import com.davidspartan.androidflipcardgame.view.components.DialogPopup
 import com.davidspartan.androidflipcardgame.view.components.ThemeCard
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.AppBackground
@@ -42,6 +53,7 @@ import com.davidspartan.androidflipcardgame.view.components.backgroundelements.G
 import com.davidspartan.androidflipcardgame.view.components.backgroundelements.PointPlate
 import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
 import com.davidspartan.androidflipcardgame.view.components.buttons.WideOrangeButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.shrinkOnPress
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
 import com.davidspartan.database.realm.Theme
@@ -79,7 +91,7 @@ fun ThemeScreenContent(
     viewModel: UserFlowViewModel
 ) {
     var themeSelectedForPurchase by remember { mutableStateOf(AllThemes[0]) }
-    var showDeleteDialog by rememberSaveable  { mutableStateOf(false) }
+    var showPurchasePopup by rememberSaveable  { mutableStateOf(false) }
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     var isNavigating by rememberSaveable { mutableStateOf(false) }
@@ -123,7 +135,7 @@ fun ThemeScreenContent(
                     viewModel,
                     selectTheme = { theme ->
                         themeSelectedForPurchase = theme
-                        showDeleteDialog = true
+                        showPurchasePopup = true
                     }
                 )
             }
@@ -149,7 +161,7 @@ fun ThemeScreenContent(
                         viewModel,
                         selectTheme = { theme ->
                             themeSelectedForPurchase = theme
-                            showDeleteDialog = true
+                            showPurchasePopup = true
                         }
                     )
 
@@ -164,27 +176,21 @@ fun ThemeScreenContent(
             }
         }
     }
-    if (showDeleteDialog) {
-        DialogPopup(
-            onDismissRequest = { showDeleteDialog = false },
-            onConfirmation = {
-                viewModel.purchaseTheme(user, themeSelectedForPurchase) { success ->
-                    if (success) {
-                        viewModel.selectTheme(user, themeSelectedForPurchase)
-                        showDeleteDialog = false
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+    if (showPurchasePopup) {
+        UnlockThemePopUp(user.selectedTheme, onDismiss = { showPurchasePopup = false }){
+            viewModel.purchaseTheme(user, themeSelectedForPurchase) { success ->
+                if (success) {
+                    viewModel.selectTheme(user, themeSelectedForPurchase)
+                    showPurchasePopup = false
+                } else {
+                    Toast.makeText(
+                        context,
+                        "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            },
-            dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
-            dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
-            icon = Icons.Default.ShoppingCart
-        )
+            }
+        }
     }
 }
 
@@ -258,4 +264,82 @@ private fun LockedThemeShadow(onClick: () -> Unit) {
                 onClick.invoke()
             },
     )
+}
+
+@Composable
+fun UnlockThemePopUp(theme: Theme, onDismiss: () -> Unit ,onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f)),
+        contentAlignment = Alignment.Center
+    ){
+        Box(
+            Modifier
+                .width(318.59082.dp)
+                .height(363.37695.dp)
+                .background(color = stringToColor(theme.primaryHexColor), shape = RoundedCornerShape(size = 20.dp)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.size(50.dp),
+                    painter = rememberAsyncImagePainter(model = R.drawable.shopping_bag),
+                    contentDescription = "shopping back icon",
+                )
+                Spacer(modifier = Modifier.height(46.dp))
+                Text(
+                    text = "Unlock Forest?",
+                    style = TextStyle(
+                        fontSize = 26.sp,
+                        fontFamily = FontFamily(Font(R.font.pally)),
+                        fontWeight = FontWeight(700),
+                        color = Color(0xFFFFFFFF),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "By Pressing confirm 10 points will be\n removed from your score.",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.pally)),
+                        fontWeight = FontWeight(500),
+                        color = Color(0xFFEAEAEA),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.height(46.dp))
+                OrangeButton(
+                    text = "Confirm"
+                ) {
+                    onClick.invoke()
+                }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(width = 240.dp, height = 56.dp)
+                        .shrinkOnPress{
+                            onDismiss.invoke()
+                        }
+                ){
+                    Text(
+                        text = "Dismiss",
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.pally)),
+                            fontWeight = FontWeight(700),
+                            color = Color(0xFFFFFFFF),
+                            textAlign = TextAlign.Center,
+                        )
+                    )
+                }
+            }
+        }
+    }
+
 }
