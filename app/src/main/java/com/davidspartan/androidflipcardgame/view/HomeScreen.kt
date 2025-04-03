@@ -1,7 +1,6 @@
 package com.davidspartan.androidflipcardgame.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,9 +8,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,10 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.davidspartan.androidflipcardgame.model.stringToColor
-import com.davidspartan.androidflipcardgame.view.components.OptionButton
-import com.davidspartan.androidflipcardgame.view.components.ThemedText
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.AppBackground
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.NamePlate
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.PointPlate
+import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.PlayButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.ThemeButton
 import com.davidspartan.androidflipcardgame.view.navigation.Appearance
 import com.davidspartan.androidflipcardgame.view.navigation.Game
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
@@ -41,11 +45,12 @@ fun HomeScreen(
     when (uiState) {
 
         is UserUiState.LoggedIn -> {
-
             val user = (uiState as UserUiState.LoggedIn).selectedUser
-
-            HomeMenuContent(user, navController)
-
+            AppBackground(
+                theme = user.selectedTheme
+            ) {
+                HomeMenuContent(user, navController)
+            }
         }
 
         UserUiState.LoggedOut -> {
@@ -67,14 +72,24 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                 horizontalArrangement = Arrangement.SpaceEvenly
 
             ) {
-                UserMenuInfo(user)
+                Column(
+                    modifier = Modifier,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    NamePlate(
+                        name = user.name
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    PointPlate(
+                        points = "Points: ${user.score}"
+                    )
+                }
 
-                MenuButtons(user, navController)
+                MenuButtons(false,navController)
 
             }
         }
@@ -83,15 +98,31 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                UserMenuInfo(user)
-                Spacer(modifier = Modifier.weight(0.5f))
-                MenuButtons(user, navController)
-                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.width(14.dp))
+                    NamePlate(
+                        name = user.name
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    PointPlate(
+                        points = "Points: ${user.score}"
+                    )
+                    Spacer(modifier = Modifier.width(14.dp))
+                }
+
+                MenuButtons(
+                    portrait = true,
+                    navController = navController
+                )
 
             }
         }
@@ -100,62 +131,38 @@ fun HomeMenuContent(user: User, navController: NavHostController) {
 
 }
 
-@Composable
-fun UserMenuInfo(user: User) {
-    Column(
-        modifier = Modifier
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        ThemedText(
-            text = "User: ${user.name}",
-            theme = user.selectedTheme
-        )
-
-        Spacer(modifier = Modifier.size(5.dp))
-
-        ThemedText(
-            text = "Points: ${user.score}",
-            theme = user.selectedTheme
-        )
-    }
-}
 
 @Composable
-fun MenuButtons(user: User, navController: NavHostController) {
+fun MenuButtons(portrait: Boolean, navController: NavHostController) {
 
     Column(
         modifier = Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Display content when a user is logged in
-        OptionButton(
-            text = "Play",
-            theme = user.selectedTheme
+
+        if (portrait){
+            Spacer(modifier = Modifier.weight(0.4f))
+        }
+        PlayButton(
+            text = "Play"
         ) {
             navController.navigate(Game)
         }
 
-        Spacer(modifier = Modifier.size(5.dp))
-
-        OptionButton(
-            text = "Themes",
-            theme = user.selectedTheme
-        ) {
+        Spacer(modifier = Modifier.size(16.dp))
+        ThemeButton {
             navController.navigate(Appearance)
         }
 
-        Spacer(modifier = Modifier.size(5.dp))
+        Spacer(modifier = Modifier.weight(0.6f))
 
-        OptionButton(
-            text = "Go Back To Login",
-            theme = user.selectedTheme
+        OrangeButton(
+            text = "Go Back To Login"
         ) {
             navController.navigateUp()
-
         }
+        Spacer(modifier = Modifier.size(64.dp))
     }
 
 }

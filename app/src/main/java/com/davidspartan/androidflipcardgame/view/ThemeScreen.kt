@@ -2,6 +2,7 @@ package com.davidspartan.androidflipcardgame.view
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,19 +14,14 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,17 +35,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.davidspartan.database.realm.AllThemes
+import coil.compose.rememberAsyncImagePainter
+import com.davidspartan.androidflipcardgame.R
 import com.davidspartan.androidflipcardgame.model.stringToColor
-import com.davidspartan.androidflipcardgame.view.components.AutoResizedTextWithBackground
-import com.davidspartan.androidflipcardgame.view.components.DialogPopup
-import com.davidspartan.androidflipcardgame.view.components.OptionButton
-import com.davidspartan.androidflipcardgame.view.components.ThemedText
+import com.davidspartan.database.realm.AllThemes
+import com.davidspartan.androidflipcardgame.view.components.ThemeCard
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.AppBackground
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameBoardFrame
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.PointPlate
+import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.WideOrangeButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.shrinkOnPress
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
 import com.davidspartan.database.realm.Theme
@@ -65,7 +69,11 @@ fun ThemeScreen(
     when (uiState) {
         is UserUiState.LoggedIn -> {
             val user = (uiState as UserUiState.LoggedIn).selectedUser
-            ThemeScreenContent(user, navController, viewModel)
+            AppBackground(
+                theme = user.selectedTheme
+            ) {
+                ThemeScreenContent(user, navController, viewModel)
+            }
         }
 
         UserUiState.LoggedOut -> {
@@ -83,7 +91,7 @@ fun ThemeScreenContent(
     viewModel: UserFlowViewModel
 ) {
     var themeSelectedForPurchase by remember { mutableStateOf(AllThemes[0]) }
-    var showDeleteDialog by rememberSaveable  { mutableStateOf(false) }
+    var showPurchasePopup by rememberSaveable  { mutableStateOf(false) }
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     var isNavigating by rememberSaveable { mutableStateOf(false) }
@@ -94,7 +102,6 @@ fun ThemeScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -105,20 +112,21 @@ fun ThemeScreenContent(
                     //verticalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Spacer(modifier = Modifier.size(5.dp))
-                    ThemedText(
-                        text = "Points: ${user.score}",
-                        theme = user.selectedTheme
+                    PointPlate(
+                        points = "Points: ${user.score}"
                     )
+
                     Spacer(modifier = Modifier.size(50.dp))
-                    OptionButton(
-                        text = "Go To Menu",
-                        theme = user.selectedTheme
+
+                    OrangeButton(
+                        text = "Go To Menu"
                     ) {
                         if(!isNavigating){
                             isNavigating = true
                             navController.navigateUp()
                         }
                     }
+
                     Spacer(modifier = Modifier.size(5.dp))
 
                 }
@@ -127,7 +135,7 @@ fun ThemeScreenContent(
                     viewModel,
                     selectTheme = { theme ->
                         themeSelectedForPurchase = theme
-                        showDeleteDialog = true
+                        showPurchasePopup = true
                     }
                 )
             }
@@ -138,14 +146,12 @@ fun ThemeScreenContent(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor))
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    ThemedText(
-                        text = "Points: ${user.score}",
-                        theme = user.selectedTheme
+                    PointPlate(
+                        points = "Points: ${user.score}"
                     )
 
                     Spacer(modifier = Modifier.size(50.dp))
@@ -155,16 +161,12 @@ fun ThemeScreenContent(
                         viewModel,
                         selectTheme = { theme ->
                             themeSelectedForPurchase = theme
-                            showDeleteDialog = true
+                            showPurchasePopup = true
                         }
                     )
 
                     Spacer(modifier = Modifier.size(50.dp))
-
-                    OptionButton(
-                        text = "Go To Menu",
-                        theme = user.selectedTheme
-                    ) {
+                    WideOrangeButton(text = "Go To Menu"){
                         if(!isNavigating){
                             isNavigating = true
                             navController.navigateUp()
@@ -174,27 +176,21 @@ fun ThemeScreenContent(
             }
         }
     }
-    if (showDeleteDialog) {
-        DialogPopup(
-            onDismissRequest = { showDeleteDialog = false },
-            onConfirmation = {
-                viewModel.purchaseTheme(user, themeSelectedForPurchase) { success ->
-                    if (success) {
-                        viewModel.selectTheme(user, themeSelectedForPurchase)
-                        showDeleteDialog = false
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+    if (showPurchasePopup) {
+        UnlockThemePopUp(user.selectedTheme, onDismiss = { showPurchasePopup = false }){
+            viewModel.purchaseTheme(user, themeSelectedForPurchase) { success ->
+                if (success) {
+                    viewModel.selectTheme(user, themeSelectedForPurchase)
+                    showPurchasePopup = false
+                } else {
+                    Toast.makeText(
+                        context,
+                        "You need ${themeSelectedForPurchase.price - user.score} more points to unlock this theme",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            },
-            dialogTitle = "Unlock ${themeSelectedForPurchase.name} ?",
-            dialogText = "By pressing confirm ${themeSelectedForPurchase.price} points will be removed from your score",
-            icon = Icons.Default.ShoppingCart
-        )
+            }
+        }
     }
 }
 
@@ -204,111 +200,146 @@ fun ThemeSampleGrid(
     viewModel: UserFlowViewModel,
     selectTheme: (Theme) -> Unit // Accept Theme as a parameter
 ) {
+    GameBoardFrame(user.selectedTheme) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            val firstRow = AllThemes.take(3)  // First 3 cards
+            val secondRow = AllThemes.drop(3) // Last 3 cards
 
-
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val cardSize = if (screenWidth < screenHeight) screenWidth * 0.25f else screenHeight * 0.25f
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3), // 3 cards per row
-        modifier = Modifier,
-        verticalArrangement = Arrangement.Center
-    ) {
-        items(AllThemes) { theme -> // Iterate over each card directly
-
-            Box {
-
-                ThemeSample(
-                    theme,
-                    theme.name == user.selectedTheme.name
-                ) {
-                    viewModel.selectTheme(user, theme)
-                }
-                if (!viewModel.userHasThemeWithName(user, theme.name)) {
-                    Box(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .size(cardSize)
-                            .background(
-                                color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
-                                shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
-                            )
-                            .clickable {
+            Row {
+                firstRow.forEach { theme ->
+                    Box {
+                        ThemeCard(
+                            text = theme.name,
+                            selected = theme.name == user.selectedTheme.name,
+                            theme = theme
+                        ) {
+                            viewModel.selectTheme(user, theme)
+                        }
+                        if (!viewModel.userHasThemeWithName(user, theme.name)) {
+                            LockedThemeShadow(){
                                 selectTheme(theme)
-                            },
-                    )
+                            }
+                        }
+                    }
+
                 }
             }
+            Row{
+                secondRow.forEach { theme ->
+                    Box {
+                        ThemeCard(
+                            text = theme.name,
+                            selected = theme.name == user.selectedTheme.name,
+                            theme = theme
+                        ) {
+                            viewModel.selectTheme(user, theme)
+                        }
+                        if (!viewModel.userHasThemeWithName(user, theme.name)) {
+                            LockedThemeShadow(){
+                                selectTheme(theme)
+                            }
+                        }
+                    }
+                }
+            }
+
         }
     }
 }
 
 @Composable
-fun ThemeSample(
-    theme: Theme,
-    currentlySelected: Boolean,
-    function: () -> Unit
-) {
-
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val cardSize = if (screenWidth < screenHeight) screenWidth * 0.25f else screenHeight * 0.25f
-
+private fun LockedThemeShadow(onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .padding(16.dp)
-            .size(cardSize) // Set size to 25% of screen width
+            .padding(3.dp)
+            .size(width = 106.dp, height = 154.dp)
+            .background(
+                color = Color.Black.copy(alpha = 0.5f), // Semi-transparent black
+                shape = RoundedCornerShape(8.dp) // Rounded corners with 16dp radius
+            )
             .clickable {
-                function.invoke()
+                onClick.invoke()
             },
+    )
+}
+
+@Composable
+fun UnlockThemePopUp(theme: Theme, onDismiss: () -> Unit ,onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxSize(),
-            elevation = CardDefaults.cardElevation(8.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(containerColor = stringToColor(theme.primaryHexColor))
-
+    ){
+        Box(
+            Modifier
+                .width(318.59082.dp)
+                .height(363.37695.dp)
+                .background(color = stringToColor(theme.primaryHexColor), shape = RoundedCornerShape(size = 20.dp)),
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                AutoResizedTextWithBackground(
-                    text = theme.name,
+                Image(
+                    modifier = Modifier.size(50.dp),
+                    painter = rememberAsyncImagePainter(model = R.drawable.shopping_bag),
+                    contentDescription = "shopping back icon",
+                )
+                Spacer(modifier = Modifier.height(46.dp))
+                Text(
+                    text = "Unlock Forest?",
                     style = TextStyle(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                        fontSize = 26.sp,
+                        fontFamily = FontFamily(Font(R.font.pally)),
+                        fontWeight = FontWeight(700),
+                        color = Color(0xFFFFFFFF),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "By Pressing confirm 10 points will be\n removed from your score.",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineHeight = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.pally)),
+                        fontWeight = FontWeight(500),
+                        color = Color(0xFFEAEAEA),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Spacer(modifier = Modifier.height(46.dp))
+                OrangeButton(
+                    text = "Confirm"
+                ) {
+                    onClick.invoke()
+                }
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .background(
-                            color = stringToColor(theme.secondaryHexColor),
-                            shape = RoundedCornerShape(8.dp)
+                        .size(width = 240.dp, height = 56.dp)
+                        .shrinkOnPress{
+                            onDismiss.invoke()
+                        }
+                ){
+                    Text(
+                        text = "Dismiss",
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.pally)),
+                            fontWeight = FontWeight(700),
+                            color = Color(0xFFFFFFFF),
+                            textAlign = TextAlign.Center,
                         )
-                        .padding(8.dp),
-                    color = stringToColor(theme.textHexColor)
-                )
-            }
-        }
-        if (currentlySelected) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Delete User",
-                    tint = stringToColor("#d4af37"),
-                    modifier = Modifier
-                        .padding(2.dp)
-                )
+                    )
+                }
             }
         }
     }
-}
 
+}

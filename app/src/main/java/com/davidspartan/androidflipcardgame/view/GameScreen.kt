@@ -1,7 +1,6 @@
 package com.davidspartan.androidflipcardgame.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,15 +23,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.davidspartan.androidflipcardgame.model.stringToColor
 import com.davidspartan.androidflipcardgame.view.components.FlipCard
-import com.davidspartan.androidflipcardgame.view.components.OptionButton
-import com.davidspartan.androidflipcardgame.view.components.ThemedText
+import com.davidspartan.androidflipcardgame.view.components.FlipScoreTracker
 import com.davidspartan.androidflipcardgame.view.components.UserNotLoggedInScreen
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.AppBackground
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameBoardFrame
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.GameResultFrame
+import com.davidspartan.androidflipcardgame.view.components.backgroundelements.NamePlate
+import com.davidspartan.androidflipcardgame.view.components.buttons.OrangeButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.PlayButton
+import com.davidspartan.androidflipcardgame.view.components.buttons.WideOrangeButton
 import com.davidspartan.androidflipcardgame.viewmodel.GameUiState
 import com.davidspartan.androidflipcardgame.viewmodel.GameViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserFlowViewModel
 import com.davidspartan.androidflipcardgame.viewmodel.UserUiState
+import com.davidspartan.database.realm.Theme
 import com.davidspartan.database.realm.User
 import com.davidspartan.model.Card
 import com.davidspartan.model.GameState
@@ -61,26 +63,31 @@ fun GameScreen(
 
                 is GameUiState.Playing -> {
                     val gameState = (gameUiState as GameUiState.Playing).gameState
-
-                    GameIsPlayingContent(
-                        user = selectedUser,
-                        gameViewModel = gameViewModel,
-                        gameState = gameState,
-                        navController = navController,
-                        cards = cards
-                    )
+                    AppBackground(
+                        theme = selectedUser.selectedTheme
+                    ) {
+                        GameIsPlayingContent(
+                            user = selectedUser,
+                            gameViewModel = gameViewModel,
+                            gameState = gameState,
+                            navController = navController,
+                            cards = cards
+                        )
+                    }
                 }
 
                 is GameUiState.GameOver -> {
                     val gameState = (gameUiState as GameUiState.GameOver).gameState
-
-                    GameIsOverContent(
-                        user = selectedUser,
-                        gameState = gameState,
-                        navController = navController,
-                        gameViewModel = gameViewModel
-                    )
-
+                    AppBackground(
+                        theme = selectedUser.selectedTheme
+                    ) {
+                        GameIsOverContent(
+                            gameState = gameState,
+                            navController = navController,
+                            gameViewModel = gameViewModel,
+                            user = selectedUser
+                        )
+                    }
                 }
             }
         }
@@ -108,7 +115,6 @@ fun GameIsPlayingContent(
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor))
                     .padding(WindowInsets.statusBars.asPaddingValues()),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -117,42 +123,32 @@ fun GameIsPlayingContent(
                         .fillMaxHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    ThemedText(
-                        text = "${user.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
+                    NamePlate(
+                        name = user.name
+                    )
+                    Spacer(modifier = Modifier.size(27.dp))
+                    FlipScoreTracker(
+                        score = gameState.score,
+                        totalFlips = gameState.totalFlips,
                         theme = user.selectedTheme
                     )
-                    Spacer(modifier = Modifier.size(50.dp))
+                    Spacer(modifier = Modifier.weight(1f))
 
-                    OptionButton(
-                        text = "Go To Menu",
-                        theme = user.selectedTheme
+                    OrangeButton(
+                        text = "Go To Menu"
                     ) {
                         if(!isNavigating){
                             isNavigating = true
                             navController.navigateUp()
                         }
                     }
+                    Spacer(modifier = Modifier.size(27.dp))
                 }
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3), // 3 cards per row
-                    modifier = Modifier
-                        .background(stringToColor(user.selectedTheme.primaryHexColor)),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    items(cards) { card -> // Iterate over each card directly
-
-                        FlipCard(
-                            theme = user.selectedTheme,
-                            card = card
-                        ) {
-                            gameViewModel.flipCard(
-                                card = card
-                            )
-                        }
-                    }
-                }
-
+                GameBoard(
+                    cards = cards,
+                    gameViewModel = gameViewModel,
+                    theme = user.selectedTheme
+                )
             }
         }
 
@@ -160,45 +156,41 @@ fun GameIsPlayingContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(stringToColor(user.selectedTheme.primaryHexColor)),
+                    .padding(WindowInsets.statusBars.asPaddingValues()),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ThemedText(
-                    text = "${user.name}\nCurrent score is ${gameState.score}\nTotal flips ${gameState.totalFlips}",
+                Spacer(modifier = Modifier.size(27.dp))
+
+                NamePlate(
+                    name = user.name
+                )
+                Spacer(modifier = Modifier.weight(0.5f))
+                FlipScoreTracker(
+                    score = gameState.score,
+                    totalFlips = gameState.totalFlips,
                     theme = user.selectedTheme
                 )
-                Spacer(modifier = Modifier.size(50.dp))
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3), // 3 cards per row
-                    modifier = Modifier
-                        .background(stringToColor(user.selectedTheme.primaryHexColor)),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    items(cards) { card -> // Iterate over each card directly
 
-                        FlipCard(
-                            theme = user.selectedTheme,
-                            card = card
-                        ) {
-                            gameViewModel.flipCard(
-                                card = card
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.size(50.dp))
-
-                OptionButton(
-                    text = "Go To Menu",
+                Spacer(modifier = Modifier.size(27.dp))
+                
+                GameBoard(
+                    cards = cards,
+                    gameViewModel = gameViewModel,
                     theme = user.selectedTheme
+                )
+                
+                Spacer(modifier = Modifier.weight(0.5f))
+
+                WideOrangeButton(
+                    text = "Go To Menu"
                 ) {
                     if(!isNavigating){
                         isNavigating = true
                         navController.navigateUp()
                     }
                 }
+                Spacer(modifier = Modifier.size(72.dp))
             }
         }
     }
@@ -207,38 +199,81 @@ fun GameIsPlayingContent(
 
 @Composable
 fun GameIsOverContent(
-    user: User,
     gameState: GameState,
     navController: NavHostController,
-    gameViewModel: GameViewModel
+    gameViewModel: GameViewModel,
+    user: User
 ) {
     var isNavigating by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(stringToColor(user.selectedTheme.primaryHexColor)),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ThemedText(
-            text = "Result\nScore: ${gameState.score}\nTotal flips: ${gameState.totalFlips}",
-            theme = user.selectedTheme
-        )
-        Spacer(modifier = Modifier.size(50.dp))
-        OptionButton(
-            text = "New Game",
-            theme = user.selectedTheme
+        Spacer(modifier = Modifier.weight(0.5f))
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp), // Optional: Adds horizontal padding
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            gameViewModel.resetGame()
+            GameResultFrame(
+                score = gameState.score,
+                totalFlips = gameState.totalFlips,
+                theme = user.selectedTheme
+            )
+            Spacer(modifier = Modifier.size(50.dp))
+
+            PlayButton(text = "New Game") {
+                gameViewModel.resetGame()
+            }
         }
-        Spacer(modifier = Modifier.size(8.dp))
-        OptionButton(
+        Spacer(modifier = Modifier.weight(0.5f))
+
+        WideOrangeButton(
             text = "Go To Menu",
-            theme = user.selectedTheme
         ) {
-            if(!isNavigating){
+            if (!isNavigating) {
                 isNavigating = true
                 navController.navigateUp()
+            }
+        }
+        Spacer(modifier = Modifier.size(72.dp))
+    }
+}
+
+
+@Composable
+fun GameBoard(cards: List<Card>, gameViewModel: GameViewModel, theme: Theme) {
+    GameBoardFrame(theme) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Split the list into two rows
+            val firstRow = cards.take(3)  // First 3 cards
+            val secondRow = cards.drop(3) // Last 3 cards
+
+            Row{
+                firstRow.forEach { card ->
+                    FlipCard(
+                        card = card
+                    ) {
+                        gameViewModel.flipCard(card)
+                    }
+                }
+            }
+
+            Row{
+                secondRow.forEach { card ->
+                    FlipCard(
+                        card = card
+                    ) {
+                        gameViewModel.flipCard(card)
+                    }
+                }
             }
         }
     }

@@ -4,7 +4,6 @@ import com.davidspartan.model.GameState
 import com.davidspartan.model.Card
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.time.delay
 import kotlinx.coroutines.*
 
 
@@ -69,7 +68,7 @@ class GameRepository {
 
     companion object {
         private fun generateCards(): List<Card> {
-            val colors = listOf("#FF0000", "#0000FF", "#00FF00")
+            val colors = listOf("#3bf9a0", "#f9d73b", "#eb49aa")
             return colors.flatMap { color -> listOf(Card(hexColor = color), Card(hexColor = color)) }
                 .shuffled()
         }

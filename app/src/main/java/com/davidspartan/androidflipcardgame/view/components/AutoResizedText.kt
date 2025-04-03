@@ -1,15 +1,9 @@
 package com.davidspartan.androidflipcardgame.view.components
 
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,44 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.isUnspecified
-import com.davidspartan.database.realm.Theme
-import com.davidspartan.androidflipcardgame.model.stringToColor
 
-
-@Composable
-fun OptionButton(
-    text: String,
-    theme: Theme,
-    onClick: () -> Unit
-) {
-    val config = LocalConfiguration.current
-    val screenWidth = config.screenWidthDp
-    val choiceButtonTextStyle = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold
-    )
-
-    Button(
-        onClick = {
-            onClick.invoke()
-        },
-        modifier = Modifier
-            .size(width = (screenWidth * 0.45).dp, height = 50.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = stringToColor(theme.secondaryHexColor))
-    ) {
-        AutoResizedText(
-            text = text,
-            style = choiceButtonTextStyle,
-            modifier = Modifier,
-            color = stringToColor(theme.textHexColor)
-        )
-    }
-
-}
 
 @Composable
 fun AutoResizedText(
