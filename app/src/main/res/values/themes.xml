@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.AndroidFlipCardGame" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.AndroidFlipCardGame" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Set Splash Screen Background to Purple -->
+        <item name="android:windowBackground">@color/purple_500</item>
+    </style>
+
 </resources>
