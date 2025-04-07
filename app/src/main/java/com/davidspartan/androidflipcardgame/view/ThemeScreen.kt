@@ -177,7 +177,7 @@ fun ThemeScreenContent(
         }
     }
     if (showPurchasePopup) {
-        UnlockThemePopUp(user.selectedTheme, onDismiss = { showPurchasePopup = false }){
+        UnlockThemePopUp(user.selectedTheme,themeSelectedForPurchase ,onDismiss = { showPurchasePopup = false }){
             viewModel.purchaseTheme(user, themeSelectedForPurchase) { success ->
                 if (success) {
                     viewModel.selectTheme(user, themeSelectedForPurchase)
@@ -267,11 +267,13 @@ private fun LockedThemeShadow(onClick: () -> Unit) {
 }
 
 @Composable
-fun UnlockThemePopUp(theme: Theme, onDismiss: () -> Unit ,onClick: () -> Unit) {
+fun UnlockThemePopUp(theme: Theme,themeSelectedForPurchase: Theme, onDismiss: () -> Unit ,onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)),
+            .background(Color.Black.copy(alpha = 0.5f))
+            .clickable { onDismiss.invoke() }
+        ,
         contentAlignment = Alignment.Center
     ){
         Box(
@@ -303,7 +305,7 @@ fun UnlockThemePopUp(theme: Theme, onDismiss: () -> Unit ,onClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "By Pressing confirm 10 points will be\n removed from your score.",
+                    text = "By Pressing confirm ${themeSelectedForPurchase.price} points will be\n removed from your score.",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
